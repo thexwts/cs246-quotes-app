@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Quotes</string>
     <string name="action_settings">Settings</string>
+    <string name="sms_test_button">SMS Test</string>
+    <string name="list_view_test_button">ListView Test</string>
+    <string name="another_test_button">Another Test</string>
+    <string name="title_activity_list_view_test">ListViewTestActivity</string>
 </resources>

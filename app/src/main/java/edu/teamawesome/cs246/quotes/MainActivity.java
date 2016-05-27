@@ -1,9 +1,11 @@
 package edu.teamawesome.cs246.quotes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -33,5 +35,42 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    /** Called when user clicks SMS Test button. */
+    public void smsTestClick(View view) {
+//        Intent intentSMSTestActivity = new Intent(this, SMSTestActivity.class);
+//
+//        // start our SMSTestActivity
+//        startActivity(intentSMSActivity);
+    }
+
+
+    /** Called when user clicks ListView Test button. */
+    public void listViewTestClick(View view) {
+        Intent intentListViewTestActivity = new Intent(this, ListViewTestActivity.class);
+
+        // build the string array we will send
+        String[] testStrings = {
+                "Hello",
+                "World!",
+                "How",
+                "are",
+                "you",
+                "today?"
+        };
+
+        // start our ListViewTestActivity
+        startActivity(intentListViewTestActivity);
+    }
+
+
+    /** Called when user clicks Another Test button. */
+    public void anotherTestClick(View view) {
+//        Intent intentSomeTestActivity = new Intent(this, SomeTestActivity.class);
+
+        // start our SomeTestActivity
+//        startActivity(intentSomeTestActivity);
     }
 }
