@@ -51,16 +51,6 @@ public class MainActivity extends ActionBarActivity {
     public void listViewTestClick(View view) {
         Intent intentListViewTestActivity = new Intent(this, ListViewTestActivity.class);
 
-        // build the string array we will send
-        String[] testStrings = {
-                "Hello",
-                "World!",
-                "How",
-                "are",
-                "you",
-                "today?"
-        };
-
         // start our ListViewTestActivity
         startActivity(intentListViewTestActivity);
     }

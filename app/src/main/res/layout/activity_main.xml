@@ -21,7 +21,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sms_test_button"
                 android:onClick="smsTestClick"
-                android:id="@+id/sms_test_button" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+                android:id="@+id/sms_test_button"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
     </RelativeLayout>
     <RelativeLayout
             android:layout_width="match_parent"
@@ -33,7 +35,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/list_view_test_button"
                 android:onClick="listViewTestClick"
-                android:id="@+id/list_view_test_button" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+                android:id="@+id/list_view_test_button"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
     </RelativeLayout>
     <RelativeLayout
             android:layout_width="match_parent"
@@ -45,6 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/another_test_button"
                 android:onClick="anotherTestClick"
-                android:id="@+id/another_test_button" android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
+                android:id="@+id/another_test_button"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 </LinearLayout>

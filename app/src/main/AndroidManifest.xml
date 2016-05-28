@@ -25,6 +25,14 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="edu.teamawesome.cs246.quotes.MainActivity"/>
         </activity>
+        <activity
+                android:name=".QuoteDisplayActivity"
+                android:label="@string/title_quote_display_test"
+                android:parentActivityName=".ListViewTestActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="edu.teamawesome.cs246.quotes.ListViewTestActivity"/>
+        </activity>
     </application>
 
 </manifest>

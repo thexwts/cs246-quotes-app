@@ -6,6 +6,7 @@
         tools:context="edu.teamawesome.cs246.quotes.ListViewTestActivity">
 
     <ListView
+            android:id="@+id/list_view_test"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/text_margin"/>

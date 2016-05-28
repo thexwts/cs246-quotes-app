@@ -4,5 +4,9 @@
     <string name="sms_test_button">SMS Test</string>
     <string name="list_view_test_button">ListView Test</string>
     <string name="another_test_button">Another Test</string>
-    <string name="title_activity_list_view_test">ListViewTestActivity</string>
+    <string name="title_activity_list_view_test">List View Test Activity</string>
+    <string name="title_quote_display_test">Quote Display test</string>
+    <string name="title_hint">Title</string>
+    <string name="tags_hint">Tags</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
 </resources>
