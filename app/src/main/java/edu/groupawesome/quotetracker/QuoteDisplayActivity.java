@@ -1,4 +1,4 @@
-package edu.teamawesome.cs246.quotes;
+package edu.groupawesome.quotetracker;
 
 import android.content.Intent;
 import android.graphics.Color;

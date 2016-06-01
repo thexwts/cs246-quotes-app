@@ -1,4 +1,4 @@
-package edu.teamawesome.cs246.quotes;
+package edu.groupawesome.quotetracker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
