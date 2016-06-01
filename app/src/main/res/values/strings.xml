@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quotes</string>
+    <string name="app_name">Quote Tracker</string>
     <string name="action_settings">Settings</string>
     <string name="sms_test_button">SMS Test</string>
     <string name="list_view_test_button">ListView Test</string>
