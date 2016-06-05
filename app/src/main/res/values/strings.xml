@@ -9,4 +9,11 @@
     <string name="title_hint">Title</string>
     <string name="tags_hint">Tags</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="action_add">Add new quote</string>
+    <string name="search_hint">filter list</string>
+
+    // Add quote confirm dialgo
+    <string name="confirm_add_title">Add Quote</string>
+    <string name="confirm_add_text">Are you sure you want to add this quote?</string>
+    <string name="confirm_add">Add Quote</string>
 </resources>

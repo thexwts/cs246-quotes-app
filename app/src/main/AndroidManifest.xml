@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ListViewTestActivity"
+                android:name=".ListViewSearchTestActivity"
                 android:label="@string/title_activity_list_view_test"
                 android:parentActivityName=".MainActivity">
             <meta-data
@@ -29,10 +29,10 @@
         <activity
                 android:name=".QuoteDisplayActivity"
                 android:label="@string/title_quote_display_test"
-                android:parentActivityName=".ListViewTestActivity">
+                android:parentActivityName=".ListViewSearchTestActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="edu.groupawesome.quotetracker.ListViewTestActivity"/>
+                    android:value=".ListViewSearchTestActivity"/>
         </activity>
     </application>
 
