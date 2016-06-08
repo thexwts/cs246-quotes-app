@@ -35,7 +35,6 @@ public class ListViewSearchTestActivity extends AppCompatActivity implements Sea
 
         setUpSearchView();
         populateListView();
-        // we don't want to click on cheese...
         registerClickCallback();
     }
 
@@ -107,7 +106,7 @@ public class ListViewSearchTestActivity extends AppCompatActivity implements Sea
 
     private void registerClickCallback() {
 
-        // a listener to call the other activity
+        // a listener to call the other activity USE THIS TO CALL OTHER ACTIVITY INSTEAD OF SWITCHING LAYOUTS
 //        // create a listener to check for the item clicked
 //        mQuotesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -155,19 +154,18 @@ public class ListViewSearchTestActivity extends AppCompatActivity implements Sea
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-
-        if (TextUtils.isEmpty(query)) {
-            mQuotesListView.clearTextFilter();
-        } else {
-            mQuotesListView.setFilterText(query);
-        }
-        return true;
-
+        return onQueryTextChange(query);
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+
+        if (TextUtils.isEmpty(newText)) {
+            mQuotesListView.clearTextFilter();
+        } else {
+            mQuotesListView.setFilterText(newText);
+        }
+        return true;
     }
 
 
