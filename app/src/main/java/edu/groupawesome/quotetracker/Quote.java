@@ -72,6 +72,7 @@ class Quote {
     private String title;
     private String quote;
     private String author;
+    private Integer ID;
 
     // fix this, I know it won't be a String
     private String tag;
@@ -79,6 +80,10 @@ class Quote {
     // getters and setters
     public String getQuote() {
         return quote;
+    }
+
+    public Integer getID() {
+        return ID;
     }
 
     public void setQuote(String quote) {
@@ -112,6 +117,8 @@ class Quote {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+    public void setID(Integer ID) {this.ID = ID;}
 
     // the idea was to retrieve from the quotesList without allowing it to be modified, but it didn't work
 //    public static List<Quote> getQuotesList() {
