@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Quote {
     // MEMBER VARIABLES
+    private int mId;
     private String mTitle;
     private String mAuthor;
     private String mQuoteText;
@@ -20,17 +21,17 @@ public class Quote {
 
     // CONSTRUCTORS
     private Quote() {
-
     }
 
     // TODO: Add List of Tags to constructor
+    // TODO: Add logic to get id from database insertion
     public Quote(String title, String author, String quoteText) {
         // Initialize the fields
         mAuthor = author;
         mQuoteText = quoteText;
 
         mTitle = title;
-        if (mTitle == null || mTitle == "") {
+        if (mTitle == null || mTitle.equals("")) {
             mTitle = generateGenericTitle();
         }
 
@@ -113,7 +114,7 @@ public class Quote {
      * @return the generic title
      */
     private String generateGenericTitle() {
-        // Get no more than the first five words of teh quote
+        // Get no more than the first five words of the quote
         String[] spaceSplit = mQuoteText.split(" ", 5);
 
         // Get just the words before a newline, if there are any newlines

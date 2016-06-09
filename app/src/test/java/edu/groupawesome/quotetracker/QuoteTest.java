@@ -2,13 +2,17 @@
  * Created by Ethan Stewart on 6/8/2016.
  */
 
-package edu.groupawesome.tests;
+package edu.groupawesome.quotetracker;
 
-import android.test.InstrumentationTestCase;
+import org.junit.Test;
 
-import edu.groupawesome.quotetracker.Quote;
+import java.util.ArrayList;
+import java.util.List;
 
-public class QuoteTest extends InstrumentationTestCase {
+import static org.junit.Assert.*;
+
+public class QuoteTest {
+    @Test
     public void testGenericTitle() {
         String title = null;
         String author = "William Shakespeare";
@@ -36,5 +40,30 @@ public class QuoteTest extends InstrumentationTestCase {
         assertEquals("Nothing will come of nothing", quoteFive.getTitle());
         assertEquals("Et tu, Brute!", quoteShort.getTitle());
         assertEquals("Haikus are tricky...", quoteNewLine.getTitle());
+    }
+
+    @Test
+    public void testGetTitle() {
+        String[] titles = { "Hamlet",
+                            "Julius Caesar",
+                            "Romeo and Juliet",
+                            "Macbeth",
+                            "A Midsummer Night's Dream",
+                            null };
+        String author = "William Shakespeare";
+        String quoteText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
+                "eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        Quote[] quotes = new Quote[titles.length];
+
+        for (int i = 0; i < titles.length; i++) {
+            quotes[i] = new Quote(titles[i], author, quoteText);
+        }
+
+        assertEquals("Hamlet", quotes[0].getTitle());
+        assertEquals("Julius Caesar", quotes[1].getTitle());
+        assertEquals("Romeo and Juliet", quotes[2].getTitle());
+        assertEquals("Macbeth", quotes[3].getTitle());
+        assertEquals("A Midsummer Night's Dream", quotes[4].getTitle());
+        assertNotNull(quotes[5].getTitle());
     }
 }
