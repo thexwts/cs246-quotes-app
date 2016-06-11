@@ -31,9 +31,12 @@ public class Quote {
         mQuoteText = quoteText;
 
         mTitle = title;
+        System.out.println(String.format("mTitle = %s -- title = %s", mTitle, title));
         if (mTitle == null || mTitle.equals("")) {
+            System.out.println("mTitle was null, preparing to generate generic title");
             mTitle = generateGenericTitle();
         }
+        System.out.println("After genericTitle, mTitle = " + mTitle + "\n");
 
         // Add this new Quote to the static List
         if (sQuotesList == null) {
@@ -114,24 +117,63 @@ public class Quote {
      * @return the generic title
      */
     private String generateGenericTitle() {
-        // Get no more than the first five words of the quote
-        String[] spaceSplit = mQuoteText.split(" ", 5);
+//        // Get no more than the first five words of the quote
+//        String[] spaceSplit = mQuoteText.split(" ", 5);
+//
+//        // Get just the words before a newline, if there are any newlines
+//        String[] newlineSplit = mQuoteText.split("\n");
+//        if (newlineSplit.length > 1) {
+//            spaceSplit = newlineSplit[0].split(" ", 5);
+//
+//        }
 
-        // Get just the words before a newline, if there are any newlines
-        String[] newlineSplit = mQuoteText.split("\n");
-        if (newlineSplit.length > 1) {
-            spaceSplit = newlineSplit[0].split(" ", 5);
-        }
+        String[] spaceSplit = getFirstFiveWords(mQuoteText);
+//        String[] spaceSplit = better(mQuoteText);
 
         // Join the five or fewer words back into a String
         String genericTitle = TextUtils.join(" ", spaceSplit);
 
         // Add an ellipses at the end if the quote had more than five words
-        if (mQuoteText.split(" ").length > 5 || newlineSplit.length > 1) {
+        if (mQuoteText.split(" ").length > 5 || mQuoteText.split("\n").length > 1) {
             genericTitle += "...";
         }
 
         return genericTitle;
+    }
+
+    private String[] getFirstFiveWords(String text) {
+        String[] firstFive = text.split(" ", 5);
+
+        String[] newlineSplit = text.split("\n");
+        if (newlineSplit.length > 1) {
+            firstFive = newlineSplit[0].split(" ", 5);
+        }
+
+        if (firstFive.length < 5) {
+            return firstFive;
+        }
+
+        String[] secondarySplit = firstFive[4].split(" ");
+        firstFive[4] = secondarySplit[0];
+
+        return firstFive;
+    }
+
+    private String[] better(String text) {
+        String[] spl = text.split(" ");
+
+        String[] nlspl = text.split("\n");
+        if (nlspl.length > 1) {
+            spl = nlspl[0].split(" ");
+        }
+
+        int size = spl.length > 5 ? 5 : spl.length;
+
+        String[] result = new String[5];
+        for (int i = 0; i < size; i++) {
+            result[i] = spl[i];
+        }
+        return result;
     }
 
     // FIXME: Needs specification for which tag to remove?

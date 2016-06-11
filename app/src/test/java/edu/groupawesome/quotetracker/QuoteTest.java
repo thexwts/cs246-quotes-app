@@ -37,9 +37,16 @@ public class QuoteTest {
         assertEquals("Cowards die many times before...", quoteHuge.getTitle());
         assertEquals("To thine own self be...", quoteLong.getTitle());
         assertEquals("I have not slept one...", quoteSix.getTitle());
-        assertEquals("Nothing will come of nothing", quoteFive.getTitle());
+        assertEquals("Nothing will come of nothing.", quoteFive.getTitle());
         assertEquals("Et tu, Brute!", quoteShort.getTitle());
         assertEquals("Haikus are tricky...", quoteNewLine.getTitle());
+
+//        assertEquals("null...", quoteHuge.getTitle());
+//        assertEquals("null...", quoteLong.getTitle());
+//        assertEquals("null...", quoteSix.getTitle());
+//        assertEquals("null", quoteFive.getTitle());
+//        assertEquals("null", quoteShort.getTitle());
+//        assertEquals("null...", quoteNewLine.getTitle());
     }
 
     @Test
@@ -64,6 +71,6 @@ public class QuoteTest {
         assertEquals("Romeo and Juliet", quotes[2].getTitle());
         assertEquals("Macbeth", quotes[3].getTitle());
         assertEquals("A Midsummer Night's Dream", quotes[4].getTitle());
-        assertNotNull(quotes[5].getTitle());
+        assertEquals("Lorem ipsum dolor sit amet,...", quotes[5].getTitle());
     }
 }
