@@ -2,6 +2,11 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="edu.teamawesome.cs246.quotes.MainActivity">
+
+    <item android:id="@+id/action_quote_edit"
+          android:title="@string/action_quote_edit"
+          app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_add"
           android:title="@string/action_add"
           android:icon="@mipmap/ic_add_white_36dp"
