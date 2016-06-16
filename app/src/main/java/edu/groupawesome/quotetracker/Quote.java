@@ -117,18 +117,8 @@ public class Quote {
      * @return the generic title
      */
     private String generateGenericTitle() {
-//        // Get no more than the first five words of the quote
-//        String[] spaceSplit = mQuoteText.split(" ", 5);
-//
-//        // Get just the words before a newline, if there are any newlines
-//        String[] newlineSplit = mQuoteText.split("\n");
-//        if (newlineSplit.length > 1) {
-//            spaceSplit = newlineSplit[0].split(" ", 5);
-//
-//        }
-
+        // Get no more than the first five words of the quote
         String[] spaceSplit = getFirstFiveWords(mQuoteText);
-//        String[] spaceSplit = better(mQuoteText);
 
         // Join the five or fewer words back into a String
         String genericTitle = TextUtils.join(" ", spaceSplit);
@@ -157,23 +147,6 @@ public class Quote {
         firstFive[4] = secondarySplit[0];
 
         return firstFive;
-    }
-
-    private String[] better(String text) {
-        String[] spl = text.split(" ");
-
-        String[] nlspl = text.split("\n");
-        if (nlspl.length > 1) {
-            spl = nlspl[0].split(" ");
-        }
-
-        int size = spl.length > 5 ? 5 : spl.length;
-
-        String[] result = new String[5];
-        for (int i = 0; i < size; i++) {
-            result[i] = spl[i];
-        }
-        return result;
     }
 
     // FIXME: Needs specification for which tag to remove?
@@ -216,6 +189,20 @@ public class Quote {
      */
     public static List<Quote> getQuotesList() {
         return sQuotesList;
+    }
+
+    /**
+     * Returns a list of the title of every Quote in the static list
+     * @return the list of titles
+     */
+    public static List<String> getQuoteTitlesList() {
+        List<String> titles = new ArrayList<>();
+
+        for (Quote quote : sQuotesList) {
+            titles.add(quote.getTitle());
+        }
+
+        return titles;
     }
 
     /**
