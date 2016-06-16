@@ -9,11 +9,7 @@ public class Tag {
 
     private String mTagName;
     private Set<String> mKeywords = new HashSet<String>();
-    private static List<Tag> sTagList;
-
-    static {
-        sTagList = new ArrayList<Tag>();
-    }
+    private static List<Tag> sTagList = new ArrayList<Tag>();
 
     // we don't want nameless Tags
     private Tag() {}
