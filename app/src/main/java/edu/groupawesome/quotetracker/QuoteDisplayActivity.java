@@ -187,7 +187,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         String title = mQuote.getTitle();
         getSupportActionBar().setTitle(title.length() != 0 ? title : getResources().getString(R.string.no_title));
         quoteAuthorView.setText(mQuote.getAuthor());
-        quoteTextView.setText(mQuote.getQuote());
+        quoteTextView.setText(mQuote.getQuoteText());
         quoteTagsView.setText(mQuote.getTag());
     }
 
@@ -205,7 +205,8 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         // save what is in the EditText boxes to the quote
         mQuote.setTitle(editQuoteTitleView.getText().toString());
         mQuote.setAuthor(editQuoteAuthorView.getText().toString());
-        mQuote.setQuote(editQuoteTextView.getText().toString());
+        mQuote.setQuoteText(editQuoteTextView.getText().toString());
+        // TODO: We don't have setTag, we need to add a Tag
         mQuote.setTag(editQuoteTagsView.getText().toString());
 
         // SAVE/UPDATE IN DB - add if not already there
@@ -255,7 +256,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         // set the title to something generic
         getSupportActionBar().setTitle(R.string.layout_quote_edit_title);
         editQuoteTitleView.setText(mQuote.getTitle());
-        editQuoteTextView.setText(mQuote.getQuote());
+        editQuoteTextView.setText(mQuote.getQuoteText());
         editQuoteTagsView.setText(mQuote.getTag());
         editQuoteAuthorView.setText(mQuote.getAuthor());
     }

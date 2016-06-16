@@ -10,8 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Quote {
+
+    // TODO: Do we really need something like this? This is currently here so we can compile. QuoteDisplayActivity needs it for its intent.
+    public static final String QUOTE_LIST_INDEX = "edu.groupawesome.quotetracker.QUOTE_LIST_INDEX";
+
     // MEMBER VARIABLES
-    private int mId;
+    private int mID;
     private String mTitle;
     private String mAuthor;
     private String mQuoteText;
@@ -20,7 +24,8 @@ public class Quote {
     private static List<Quote> sQuotesList;
 
     // CONSTRUCTORS
-    private Quote() {
+    public Quote() {
+        this(null, null, null);
     }
 
     // TODO: Add List of Tags to constructor
@@ -230,5 +235,43 @@ public class Quote {
      */
     public static boolean setQuotesList(Quote[] quotes) {
         return true;
+    }
+
+    public void setID(Integer ID) {
+        mID = ID;
+    }
+
+    public int getmID() {
+        return mID;
+    }
+
+
+    // TODO: Fix this
+    public String getTag() {
+        return "Tag";
+    }
+
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    // TODO: Fix this
+    public void setTag(String tag) {
+        //
+    }
+
+    // TODO: Return the actual result
+    public static boolean quotesListContains(Quote mQuote) {
+        return false;
+    }
+
+    // TODO
+    public static void addToQuotesList(Quote mQuote) {
+    }
+
+    // TODO
+    public static Quote getQuoteAtIndex(int quoteIndex) {
+        return sQuotesList.get(quoteIndex);
     }
 }
