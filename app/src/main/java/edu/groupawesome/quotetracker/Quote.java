@@ -7,7 +7,9 @@ package edu.groupawesome.quotetracker;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Quote {
 
@@ -19,7 +21,7 @@ public class Quote {
     private String mTitle;
     private String mAuthor;
     private String mQuoteText;
-//    private List<Tag> mTags;
+    private Set<Tag> mTags = new HashSet<Tag>();
 
     private static List<Quote> sQuotesList;
 
@@ -241,10 +243,14 @@ public class Quote {
         mID = ID;
     }
 
-    public int getmID() {
+    public int getID() {
         return mID;
     }
 
+
+    public boolean addTag(Tag newTag) {
+        return mTags.add(newTag);
+    }
 
     // TODO: Fix this
     public String getTag() {
@@ -274,4 +280,5 @@ public class Quote {
     public static Quote getQuoteAtIndex(int quoteIndex) {
         return sQuotesList.get(quoteIndex);
     }
+
 }

@@ -206,8 +206,8 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         mQuote.setTitle(editQuoteTitleView.getText().toString());
         mQuote.setAuthor(editQuoteAuthorView.getText().toString());
         mQuote.setQuoteText(editQuoteTextView.getText().toString());
-        // TODO: We don't have setTag, we need to add a Tag
-        mQuote.setTag(editQuoteTagsView.getText().toString());
+        // TODO: I put in new Tag for simplicity sake for now, just to have it do something, but its wrong-this will need to see if there already is a Tag that has this name and add it, if it doesn't exist then create a new Tag
+        mQuote.addTag(new Tag(editQuoteTagsView.getText().toString()));
 
         // SAVE/UPDATE IN DB - add if not already there
         if (!Quote.quotesListContains(mQuote)) {
