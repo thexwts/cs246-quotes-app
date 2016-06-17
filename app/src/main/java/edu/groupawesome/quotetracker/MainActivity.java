@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             String quoteTextShort = "Et tu, Brute!";
             String quoteTextNewLine = "Haikus are tricky\nI'm not very good at them\nRefrigerator";
 
-            Quote quoteHuge = new Quote(title, author, quoteTextHuge);
-            Quote quoteLong = new Quote(title, author, quoteTextLong);
-            Quote quoteSix = new Quote(title, author, quoteTextSixWords);
-            Quote quoteFive = new Quote(title, author, quoteTextFiveWords);
-            Quote quoteShort = new Quote(title, author, quoteTextShort);
-            Quote quoteNewLine = new Quote(title, "Ethan Stewart", quoteTextNewLine);
+            Quote quoteHuge = new Quote(title, author, quoteTextHuge, null);
+            Quote quoteLong = new Quote(title, author, quoteTextLong, null);
+            Quote quoteSix = new Quote(title, author, quoteTextSixWords, null);
+            Quote quoteFive = new Quote(title, author, quoteTextFiveWords, null);
+            Quote quoteShort = new Quote(title, author, quoteTextShort, null);
+            Quote quoteNewLine = new Quote(title, "Ethan Stewart", quoteTextNewLine, null);
 
             // we only do this once
             testQuotesSetUpComplete = true;
@@ -188,20 +188,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     /* Call onQueryTextChange and just do the same thing. **/
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return onQueryTextChange(query);
+//        return onQueryTextChange(query);
+        return true;
     }
 
     /* Filter the listView with the text in search bar. **/
     @Override
     public boolean onQueryTextChange(String newText) {
+//        if (TextUtils.isEmpty(newText)) {
+//            mQuotesListView.clearTextFilter();
+//        } else {
+//            mQuotesListView.setFilterText(newText);
+//        }
+//        return true;
+        String cmp = newText.toLowerCase();
 
-        if (TextUtils.isEmpty(newText)) {
-            mQuotesListView.clearTextFilter();
-        } else {
-            mQuotesListView.setFilterText(newText);
+        mQuotesTitlesList.clear();
+        for (String title : Quote.getQuoteTitlesList()) {
+            String titleLower = title.toLowerCase();
+
+            if (titleLower.contains(cmp)) {
+                mQuotesTitlesList.add(title);
+            }
         }
-        return true;
 
+        if (mQuotesTitlesList.size() < 1) {
+            mQuotesTitlesList.add(String.format("No results matching %s", newText));
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        return true;
     }
 
 

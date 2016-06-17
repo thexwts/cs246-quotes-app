@@ -11,7 +11,7 @@
     <string name="tags_hint">Tags</string>
     <string name="author_hint">Author</string>
     <string name="quote_text_hint">Text</string>
-    <string name="search_hint">filter list</string>
+    <string name="search_hint">Type to search</string>
 
     // menu items
     <string name="action_add">Add new quote</string>

@@ -188,7 +188,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title.length() != 0 ? title : getResources().getString(R.string.no_title));
         quoteAuthorView.setText(mQuote.getAuthor());
         quoteTextView.setText(mQuote.getQuoteText());
-        quoteTagsView.setText(mQuote.getTag());
+        quoteTagsView.setText(mQuote.getTagsAsString());
     }
 
     private void displayQuote() {
@@ -257,7 +257,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.layout_quote_edit_title);
         editQuoteTitleView.setText(mQuote.getTitle());
         editQuoteTextView.setText(mQuote.getQuoteText());
-        editQuoteTagsView.setText(mQuote.getTag());
+        editQuoteTagsView.setText(mQuote.getTagsAsString());
         editQuoteAuthorView.setText(mQuote.getAuthor());
     }
 

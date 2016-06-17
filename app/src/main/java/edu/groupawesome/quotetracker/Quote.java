@@ -7,6 +7,8 @@ package edu.groupawesome.quotetracker;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,35 +23,37 @@ public class Quote {
     private String mTitle;
     private String mAuthor;
     private String mQuoteText;
-    private Set<Tag> mTags = new HashSet<Tag>();
+    private Set<Tag> mTags;
 
     private static List<Quote> sQuotesList;
 
     // CONSTRUCTORS
     public Quote() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    // TODO: Add List of Tags to constructor
-    // TODO: Add logic to get id from database insertion
-    public Quote(String title, String author, String quoteText) {
+    public Quote(String title, String author, String quoteText, Set<Tag> tags) {
         // Initialize the fields
         mAuthor = author;
         mQuoteText = quoteText;
 
         mTitle = title;
-        System.out.println(String.format("mTitle = %s -- title = %s", mTitle, title));
         if (mTitle == null || mTitle.equals("")) {
-            System.out.println("mTitle was null, preparing to generate generic title");
             mTitle = generateGenericTitle();
         }
-        System.out.println("After genericTitle, mTitle = " + mTitle + "\n");
+
+        mTags = new HashSet<>();
+        setTags(tags);
+
+        // TODO: Insert into database and assign ID to mID
 
         // Add this new Quote to the static List
         if (sQuotesList == null) {
             sQuotesList = new ArrayList<Quote>();
         }
         sQuotesList.add(this);
+
+
     }
 
     // GETTERS/SETTERS
@@ -63,6 +67,14 @@ public class Quote {
     }
 
     /**
+     * Returns the quote ID
+     * @return the quote ID
+     */
+    public int getID() {
+        return mID;
+    }
+
+    /**
      * Returns the quote text
      * @return the text of the quote
      */
@@ -70,9 +82,27 @@ public class Quote {
         return mQuoteText;
     }
 
-//    public List<Tag> getTags() {
-//        return mTags;
-//    }
+    /**
+     * Returns the attached tags
+     * @return the set of tags
+     */
+    public Set<Tag> getTags() {
+        return Collections.unmodifiableSet(mTags);
+    }
+
+    /**
+     * Returns the tag set as a string of comma-separated tag names
+     * @return the tag set as a string
+     */
+    public String getTagsAsString() {
+        String[] tagArray = new String[mTags.size()];
+        int i = 0;
+        for (Tag tag : mTags) {
+            tagArray[i++] = tag.getTagName();
+        }
+
+        return TextUtils.join(", ", tagArray);
+    }
 
     /**
      * Returns the title
@@ -91,6 +121,14 @@ public class Quote {
     }
 
     /**
+     * Sets the quote's ID
+     * @param ID the ID to assign to the quote
+     */
+    public void setID(int ID) {
+        mID = ID;
+    }
+
+    /**
      * Sets the text of the quote
      * @param quoteText the text of the quote
      */
@@ -98,24 +136,80 @@ public class Quote {
         mQuoteText = quoteText;
     }
 
+    /**
+     * Sets the title of the quote
+     * @param title the title of the quote
+     */
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    /**
+     * Sets the tag set
+     */
+    public void setTags(Set<Tag> tags) {
+        // Nothing to do if tags is null
+        if (tags != null) {
+            // Ensure mTags isn't null
+            if (mTags == null) {
+                mTags = new HashSet<>();
+            }
+
+            // This is a setter, not an adder, so clear the list before adding the new tags
+            mTags.clear();
+            mTags.addAll(tags);
+        }
+    }
+
     // METHODS
 
-//    /**
-//     * Adds a Tag to the Quote
-//     * @param tag the Tag to be added
-//     * @return whether the Tag was successfully added
-//     */
-//    public boolean addTag(Tag tag) {
-//        return true;
-//    }
+    /**
+     * Adds a Tag to the Quote
+     * @param tag the Tag to be added
+     * @return whether the Tag was successfully added
+     */
+    public boolean addTag(Tag tag) {
+        return mTags.add(tag);
+    }
 
-//    public boolean addAllTags(List<Tag> tags) {
-//        return true;
-//    }
+    /**
+     * Adds a Set of tags to the existing tag set
+     * @param tags the tags to be added
+     * @return whether the tags were successfully added
+     */
+    public boolean addAllTags(Set<Tag> tags) {
+        return mTags.addAll(tags);
+    }
 
-//    public boolean addAllTags(Tag[] tags) {
-//        return true;
-//    }
+    /**
+     * Adds an array of tags to the existing tag set
+     * @param tags the tags to be added
+     * @return whether the tags were successfully added
+     */
+    public boolean addAllTags(Tag[] tags) {
+        return mTags.addAll(Arrays.asList(tags));
+    }
+
+    /**
+     * Indicates whether obj is a Quote object containing the
+     * same values for all fields
+     * @param obj the object to compare
+     * @return whether this and obj contain the same values
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Quote quote = (Quote) obj;
+
+        if (mID != quote.mID) return false;
+        if (mTitle != null ? !mTitle.equals(quote.mTitle) : quote.mTitle != null) return false;
+        if (mAuthor != null ? !mAuthor.equals(quote.mAuthor) : quote.mAuthor != null) return false;
+        if (!mQuoteText.equals(quote.mQuoteText)) return false;
+        return !(mTags != null ? !mTags.equals(quote.mTags) : quote.mTags != null);
+
+    }
 
     /**
      * Returns the first five words of the quote followed by an ellipses, the first five or fewer
@@ -138,6 +232,13 @@ public class Quote {
         return genericTitle;
     }
 
+    /**
+     * Helper function for Quote::getGenericTitle()
+     * Returns an array containing the correct number of words
+     * for a generic title from the text parameter
+     * @param text the text to get the words from
+     * @return an array of words
+     */
     private String[] getFirstFiveWords(String text) {
         String[] firstFive = text.split(" ", 5);
 
@@ -156,8 +257,17 @@ public class Quote {
         return firstFive;
     }
 
-    // FIXME: Needs specification for which tag to remove?
-    public boolean removeTag() {
+    /**
+     * Removes a tag from the tag set
+     * @param tag the tag to remove
+     * @return whether the tag was successfully removed
+     */
+    public boolean removeTag(Tag tag) {
+        if (mTags.contains(tag)) {
+            return mTags.remove(tag);
+        }
+
+        // If tag wasn't in the tag set to begin with, we're good
         return true;
     }
 
@@ -169,7 +279,7 @@ public class Quote {
      * @return whether the quotes were added successfully
      */
     public static boolean addAllQuotes(List<Quote> quotes) {
-        return true;
+        return sQuotesList.addAll(quotes);
     }
 
     /**
@@ -178,7 +288,7 @@ public class Quote {
      * @return whether the quotes were added successfully
      */
     public static boolean addAllQuotes(Quote[] quotes) {
-        return true;
+        return sQuotesList.addAll(Arrays.asList(quotes));
     }
 
     /**
@@ -186,8 +296,8 @@ public class Quote {
      * @param quote the Quote object to add
      * @return whether the quote was added successfully
      */
-    public static boolean addQuote(Quote quote) {
-        return true;
+    public static boolean addToQuotesList(Quote quote) {
+        return sQuotesList.add(quote);
     }
 
     /**
@@ -203,8 +313,8 @@ public class Quote {
      * @return the list of titles
      */
     public static List<String> getQuoteTitlesList() {
+        // Add every quote's title to a List
         List<String> titles = new ArrayList<>();
-
         for (Quote quote : sQuotesList) {
             titles.add(quote.getTitle());
         }
@@ -218,6 +328,11 @@ public class Quote {
      * @return whether the quote was successfully removed
      */
     public static boolean removeQuote(Quote quote) {
+        if (sQuotesList.contains(quote)) {
+            return sQuotesList.remove(quote);
+        }
+
+        // If the quote wasn't in the list, then we're good
         return true;
     }
 
@@ -227,7 +342,10 @@ public class Quote {
      * @return whether the list was successfully set
      */
     public static boolean setQuotesList(List<Quote> quotes) {
-        return true;
+        // This removes all existing quotes, so clear the list before adding the new quotes
+        sQuotesList.clear();
+        sQuotesList.addAll(quotes);
+        return sQuotesList.equals(quotes);
     }
 
     /**
@@ -236,49 +354,35 @@ public class Quote {
      * @return whether the list was successfully set
      */
     public static boolean setQuotesList(Quote[] quotes) {
-        return true;
+        // This removes all existing quotes, so clear the list before adding the new quotes
+        sQuotesList.clear();
+        sQuotesList.addAll(Arrays.asList(quotes));
+        return sQuotesList.equals(quotes);
     }
 
-    public void setID(Integer ID) {
-        mID = ID;
+    /**
+     * Indicates whether the quote parameter is found in the
+     * static list of quotes
+     * @param quote the Quote object to look for
+     * @return whether the quote is in the list
+     */
+    public static boolean quotesListContains(Quote quote) {
+        return sQuotesList.contains(quote);
     }
 
-    public int getID() {
-        return mID;
-    }
-
-
-    public boolean addTag(Tag newTag) {
-        return mTags.add(newTag);
-    }
-
-    // TODO: Fix this
-    public String getTag() {
-        return "Tag";
-    }
-
-
-    public void setTitle(String title) {
-        mTitle = title;
-    }
-
-    // TODO: Fix this
-    public void setTag(String tag) {
-        //
-    }
-
-    // TODO: Return the actual result
-    public static boolean quotesListContains(Quote mQuote) {
-        return false;
-    }
-
-    // TODO
-    public static void addToQuotesList(Quote mQuote) {
-    }
-
-    // TODO
+    /**
+     * Returns the quote at the specified index, or null if
+     * quoteIndex is not a valid index
+     * @param quoteIndex
+     * @return a Quote instance, or null
+     */
     public static Quote getQuoteAtIndex(int quoteIndex) {
-        return sQuotesList.get(quoteIndex);
+        try {
+            Quote quote = sQuotesList.get(quoteIndex);
+            return quote;
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
+        }
     }
 
 }

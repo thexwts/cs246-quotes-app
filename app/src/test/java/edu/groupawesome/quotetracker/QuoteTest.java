@@ -27,12 +27,12 @@ public class QuoteTest {
         String quoteTextShort = "Et tu, Brute!";
         String quoteTextNewLine = "Haikus are tricky\nI'm not very good at them\nRefrigerator";
 
-        Quote quoteHuge = new Quote(title, author, quoteTextHuge);
-        Quote quoteLong = new Quote(title, author, quoteTextLong);
-        Quote quoteSix = new Quote(title, author, quoteTextSixWords);
-        Quote quoteFive = new Quote(title, author, quoteTextFiveWords);
-        Quote quoteShort = new Quote(title, author, quoteTextShort);
-        Quote quoteNewLine = new Quote(title, "Ethan Stewart", quoteTextNewLine);
+        Quote quoteHuge = new Quote(title, author, quoteTextHuge, null);
+        Quote quoteLong = new Quote(title, author, quoteTextLong, null);
+        Quote quoteSix = new Quote(title, author, quoteTextSixWords, null);
+        Quote quoteFive = new Quote(title, author, quoteTextFiveWords, null);
+        Quote quoteShort = new Quote(title, author, quoteTextShort, null);
+        Quote quoteNewLine = new Quote(title, "Ethan Stewart", quoteTextNewLine, null);
 
         assertEquals("Cowards die many times before...", quoteHuge.getTitle());
         assertEquals("To thine own self be...", quoteLong.getTitle());
@@ -63,7 +63,7 @@ public class QuoteTest {
         Quote[] quotes = new Quote[titles.length];
 
         for (int i = 0; i < titles.length; i++) {
-            quotes[i] = new Quote(titles[i], author, quoteText);
+            quotes[i] = new Quote(titles[i], author, quoteText, null);
         }
 
         assertEquals("Hamlet", quotes[0].getTitle());

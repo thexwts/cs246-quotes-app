@@ -1,5 +1,7 @@
 package edu.groupawesome.quotetracker;
 
+import android.text.TextUtils;
+
 import java.util.*;
 
 /**
@@ -9,6 +11,7 @@ class Tag {
 
     private String mTagName;
     private Set<String> mKeywordsSet = new LinkedHashSet<String>();
+
     private static Set<Tag> sTagsSet = new LinkedHashSet<Tag>();
 
     // we don't want nameless Tags
@@ -155,6 +158,16 @@ class Tag {
         assert(tag != null);
         assert(sTagsSet != null);
         return sTagsSet.remove(tag);
+    }
+
+    public String getKeywordsAsString() {
+        String[] keywordArray = new String[mKeywordsSet.size()];
+        int i = 0;
+        for (String keyword : mKeywordsSet) {
+            keywordArray[i++] = keyword;
+        }
+
+        return TextUtils.join(", ", keywordArray);
     }
 
 }
