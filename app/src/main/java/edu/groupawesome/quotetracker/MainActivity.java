@@ -6,7 +6,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // then the list would only include some of the items and the index of the item on the ListView wouldn't
                 // match up with the actual index of the quote in the list - FOR THIS TEST IT WORKS, BUT NOT FOR THE REAL THING
                 // We'll have to find a new way to tell which quote the user clicked on.
-//                showQuoteIntent.putExtra(Quote.QUOTE_LIST_INDEX, position);
+                showQuoteIntent.putExtra(Quote.QUOTE_LIST_INDEX, position);
 
                 // broadcast our showQuoteIntent
                 startActivity(showQuoteIntent);

@@ -10,9 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class QuoteDisplayActivity extends AppCompatActivity {
 
-    public static String NEW_QUOTE = "edu.groupawesome.quotetracker.NEW_QUOTE";
+    static String NEW_QUOTE = "edu.groupawesome.quotetracker.NEW_QUOTE";
 
     // views for displaying
     private static TextView quoteAuthorView;
@@ -63,6 +66,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         // figure out which intent we got
+        // FIXME: Quote retrieval from Intent
         // THIS METHOD OF RETRIEVING THE RIGHT QUOTE IS FLAWED I KNOW - this assumes that the list the user clicked on is an exhaustive list of all the
         // quotes, and thus the index of the list lines up perfectly with our QuotesList, but if it were a search
         // then the list would only include some of the items and the index of the item on the ListView wouldn't
@@ -200,19 +204,20 @@ public class QuoteDisplayActivity extends AppCompatActivity {
 
     private void saveQuote() {
         // we can only save if we were editing
-        assert(viewSwitcher.getNextView() == findViewById(R.id.layout_quote_edit_display));
+        assert (viewSwitcher.getNextView() == findViewById(R.id.layout_quote_edit_display));
 
         // save what is in the EditText boxes to the quote
         mQuote.setTitle(editQuoteTitleView.getText().toString());
         mQuote.setAuthor(editQuoteAuthorView.getText().toString());
         mQuote.setQuoteText(editQuoteTextView.getText().toString());
-        // TODO: I put in new Tag for simplicity sake for now, just to have it do something, but its wrong-this will need to see if there already is a Tag that has this name and add it, if it doesn't exist then create a new Tag
-        mQuote.addTag(new Tag(editQuoteTagsView.getText().toString()));
+        mQuote.setTags(editQuoteTagsView.getText().toString());
 
-        // SAVE/UPDATE IN DB - add if not already there
-        if (!Quote.quotesListContains(mQuote)) {
-            Quote.addToQuotesList(mQuote);
-        }
+//        // Quote currently adds itself to the QuotesList on its own so this isn't necessary.
+//        // I'm leaving this here in case we change our minds and need it later.
+//        // SAVE/UPDATE IN DB - add if not already there
+//        if (!Quote.quotesListContains(mQuote)) {
+//            Quote.addToQuotesList(mQuote);
+//        }
 
         Toast.makeText(QuoteDisplayActivity.this, "Quote saved.", Toast.LENGTH_SHORT).show();
     }
@@ -222,6 +227,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         if (viewSwitcher.getCurrentView() == findViewById(R.id.layout_quote_edit_display)) {
 //            showConfirmSaveDialog();
             saveQuote();
+            // TODO: 6/18/16
             // I wanted to ask the user if they want to save the quote currently being edited
             // before creating a new one, but that is impossible to do the way I hoped.
             // The problem is that dialogs get put on a seperate thread so when I call the dialog

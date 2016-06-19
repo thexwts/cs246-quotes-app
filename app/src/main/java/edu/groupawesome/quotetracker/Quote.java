@@ -6,12 +6,7 @@ package edu.groupawesome.quotetracker;
 
 import android.text.TextUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Quote {
 
@@ -23,7 +18,7 @@ public class Quote {
     private String mTitle;
     private String mAuthor;
     private String mQuoteText;
-    private Set<Tag> mTags;
+    private Set<Tag> mTagsSet;
 
     private static List<Quote> sQuotesList;
 
@@ -42,7 +37,7 @@ public class Quote {
             mTitle = generateGenericTitle();
         }
 
-        mTags = new HashSet<>();
+        mTagsSet = new HashSet<>();
         setTags(tags);
 
         // TODO: Insert into database and assign ID to mID
@@ -87,7 +82,7 @@ public class Quote {
      * @return the set of tags
      */
     public Set<Tag> getTags() {
-        return Collections.unmodifiableSet(mTags);
+        return Collections.unmodifiableSet(mTagsSet);
     }
 
     /**
@@ -95,9 +90,9 @@ public class Quote {
      * @return the tag set as a string
      */
     public String getTagsAsString() {
-        String[] tagArray = new String[mTags.size()];
+        String[] tagArray = new String[mTagsSet.size()];
         int i = 0;
-        for (Tag tag : mTags) {
+        for (Tag tag : mTagsSet) {
             tagArray[i++] = tag.getTagName();
         }
 
@@ -150,14 +145,64 @@ public class Quote {
     public void setTags(Set<Tag> tags) {
         // Nothing to do if tags is null
         if (tags != null) {
-            // Ensure mTags isn't null
-            if (mTags == null) {
-                mTags = new HashSet<>();
+            // Ensure mTagsSet isn't null
+            if (mTagsSet == null) {
+                mTagsSet = new HashSet<>();
             }
 
             // This is a setter, not an adder, so clear the list before adding the new tags
-            mTags.clear();
-            mTags.addAll(tags);
+            mTagsSet.clear();
+            mTagsSet.addAll(tags);
+        }
+    }
+
+
+    /**
+     * Sets the tag set from a String. The String may contain one or many Tag names, separated by a comma and space.
+     */
+    public void setTags(String tags) {
+        // if the String we get is empty then we set mTagsSet to nothing
+        if (tags.equals("")) {
+            mTagsSet.clear();
+        } else if (tags != null) {
+            // Nothing to do if tags is null
+            // TODO: parse input by comma <,> into seperate Tags
+            String[] splitTagsNames = tags.split(",\\s+");
+
+            // we need to store a Set of these Tags so we can set the Tags list in the Quote
+            // if we simply add the new Tags we won't get rid of the deleted ones
+            // setting a whole new Set will clear the old ones too
+            Set<Tag> newTagsSet = new LinkedHashSet<Tag>();
+
+            // for every Tag name we split out of the EditText we need to add a Tag to the Set
+            for (String tagName : splitTagsNames) {
+                // EUREKA! The parsing thing should fix my problem with duplicate Tags
+                // FIXME: debugging
+                System.out.println("New tag name: " + tagName);
+                System.out.println("List of current tags before adding new tag: " + newTagsSet.toString());
+
+                // if there isn't already a Tag with that name then make a new one
+                newTagsSet.add(Tag.getTagReferenceByName(tagName));
+
+                // FIXME: debugging
+                System.out.println("Adding new tag: " + tagName);
+                System.out.println("List of new tags after adding new tag: " + newTagsSet.toString());
+            }
+
+            // give mQuote the new Set of Tags
+            this.setTags(newTagsSet);
+
+            // FIXME: debugging
+            System.out.println("List of current tags after adding all new tags: " + this.getTagsAsString());
+
+            for (Tag tag:this.getTags()) {
+                System.out.println("Tags in mQuote (through iteration): " + tag.getTagName());
+            }
+
+            for (Tag tag:Tag.getTagsSet()) {
+                System.out.println("Tags in TagsSet (through iteration): " + tag.getTagName());
+            }
+
         }
     }
 
@@ -169,7 +214,7 @@ public class Quote {
      * @return whether the Tag was successfully added
      */
     public boolean addTag(Tag tag) {
-        return mTags.add(tag);
+        return mTagsSet.add(tag);
     }
 
     /**
@@ -178,7 +223,7 @@ public class Quote {
      * @return whether the tags were successfully added
      */
     public boolean addAllTags(Set<Tag> tags) {
-        return mTags.addAll(tags);
+        return mTagsSet.addAll(tags);
     }
 
     /**
@@ -187,7 +232,7 @@ public class Quote {
      * @return whether the tags were successfully added
      */
     public boolean addAllTags(Tag[] tags) {
-        return mTags.addAll(Arrays.asList(tags));
+        return mTagsSet.addAll(Arrays.asList(tags));
     }
 
     /**
@@ -207,7 +252,7 @@ public class Quote {
         if (mTitle != null ? !mTitle.equals(quote.mTitle) : quote.mTitle != null) return false;
         if (mAuthor != null ? !mAuthor.equals(quote.mAuthor) : quote.mAuthor != null) return false;
         if (!mQuoteText.equals(quote.mQuoteText)) return false;
-        return !(mTags != null ? !mTags.equals(quote.mTags) : quote.mTags != null);
+        return !(mTagsSet != null ? !mTagsSet.equals(quote.mTagsSet) : quote.mTagsSet != null);
 
     }
 
@@ -263,8 +308,8 @@ public class Quote {
      * @return whether the tag was successfully removed
      */
     public boolean removeTag(Tag tag) {
-        if (mTags.contains(tag)) {
-            return mTags.remove(tag);
+        if (mTagsSet.contains(tag)) {
+            return mTagsSet.remove(tag);
         }
 
         // If tag wasn't in the tag set to begin with, we're good

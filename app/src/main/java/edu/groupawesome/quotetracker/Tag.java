@@ -9,6 +9,7 @@ import java.util.*;
  */
 class Tag {
 
+    private int mID;
     private String mTagName;
     private Set<String> mKeywordsSet = new LinkedHashSet<String>();
 
@@ -21,6 +22,7 @@ class Tag {
     Tag(String newName) {
         assert(newName != null);
         mTagName = newName;
+        sTagsSet.add(this);
     }
 
     /** Constructor: Name and keywords (Collection of Strings). */
@@ -28,6 +30,14 @@ class Tag {
         this(newName);
         assert(newKeywords != null);
         mKeywordsSet.addAll(newKeywords);
+    }
+
+    public int getID() {
+        return mID;
+    }
+
+    public void setID(int ID) {
+        mID = ID;
     }
 
     String getTagName() {
@@ -68,6 +78,16 @@ class Tag {
         assert(keyword != null);
         assert(mKeywordsSet != null);
         return mKeywordsSet.contains(keyword);
+    }
+
+    public String getKeywordsAsString() {
+        String[] keywordArray = new String[mKeywordsSet.size()];
+        int i = 0;
+        for (String keyword : mKeywordsSet) {
+            keywordArray[i++] = keyword;
+        }
+
+        return TextUtils.join(", ", keywordArray);
     }
 
     /** Returns an unmodifiable copy of this tag's KeywordsSet. The Set can't be modified. Use this tag's object methods to modify the KeywordsSet. */
@@ -160,14 +180,36 @@ class Tag {
         return sTagsSet.remove(tag);
     }
 
-    public String getKeywordsAsString() {
-        String[] keywordArray = new String[mKeywordsSet.size()];
-        int i = 0;
-        for (String keyword : mKeywordsSet) {
-            keywordArray[i++] = keyword;
+    //TODO: Test this
+    /** Returns the tag with the given name. If it doesn't currently exist it will be created. */
+    static Tag getTagReferenceByName(String name) {
+
+        for (Tag tag:sTagsSet) {
+            if (tag.getTagName().equals(name)) { return tag; }
         }
 
-        return TextUtils.join(", ", keywordArray);
+        return new Tag(name);
+    }
+
+    // FIXME: 6/18/16
+    /** Returns the tag with the given ID. If it doesn't currently exist null is returned. */
+    static Tag getTagReferenceByID(int ID) {
+
+        for (Tag tag:sTagsSet) {
+            if (tag.getID() == ID) { return tag; }
+        }
+
+        return null;
+    }
+
+    //TODO: Test this
+    static boolean tagWithNameExists(String name) {
+
+        for (Tag tag:sTagsSet) {
+            if (tag.getTagName().equals(name)) { return true; }
+        }
+
+        return false;
     }
 
 }
