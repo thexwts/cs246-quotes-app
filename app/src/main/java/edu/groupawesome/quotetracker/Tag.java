@@ -191,7 +191,7 @@ class Tag {
         return new Tag(name);
     }
 
-    // FIXME: 6/18/16
+    // FIXME: 6/18/16 Think of other methods we would want to use the ID for (e.g.: find by ID)
     /** Returns the tag with the given ID. If it doesn't currently exist null is returned. */
     static Tag getTagReferenceByID(int ID) {
 

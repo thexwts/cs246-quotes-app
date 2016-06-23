@@ -1,8 +1,6 @@
 package edu.groupawesome.quotetracker;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 return true;
 
             case R.id.action_add:
-                showNewQuoteDialog();
+                createNewQuote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,32 +130,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mQuotesListView.setTextFilterEnabled(true);
     }
 
-    /* **/
-    private void showNewQuoteDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirm_add_title)
-                .setMessage(R.string.confirm_add_text)
-                .setPositiveButton(R.string.confirm_add, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        createNewQuote();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
     private void createNewQuote() {
         Intent newQuoteInent = new Intent(MainActivity.this, QuoteDisplayActivity.class);
 
         newQuoteInent.putExtra(QuoteDisplayActivity.NEW_QUOTE, true);
         startActivity(newQuoteInent);
     }
-
 
     /** Register a click callback for items in list to call Quote Display. BROKEN */
     private void registerClickCallbackOnListItem() {

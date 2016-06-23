@@ -1,19 +1,17 @@
 package edu.groupawesome.quotetracker;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public class QuoteDisplayActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = "QuoteDisplayActivity";
 
     static String NEW_QUOTE = "edu.groupawesome.quotetracker.NEW_QUOTE";
 
@@ -48,19 +46,23 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         viewSwitcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(LOG_TAG, "User clicked main view.");
+                // TODO: remove this for release version
                 Toast.makeText(QuoteDisplayActivity.this, "That tickles!", Toast.LENGTH_SHORT).show();
 
                 if (getSupportActionBar().isShowing()) {
+                    Log.i(LOG_TAG, "Hiding Action Bar.");
                     getSupportActionBar().hide();
                 } else {
+                    Log.i(LOG_TAG, "Showing Action Bar.");
                     getSupportActionBar().show();
                 }
             }
         });
 
         // set up the TextViews and EditTexts
-        setUpDisplay();
-        setUpEditText();
+        setUpQuoteDisplayTextViews();
+        setUpEditTextViews();
 
         // get our quote from the intent
         Intent intent = getIntent();
@@ -100,22 +102,22 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
 
-            // THIS ISN'T THE MOST USER FRIENDLY THING, I KNOW. IT IS A PROOF OF CONCEPT THAT CAN BE MODIFIED
+            // FIXME: EDIT/SAVE BUTTON - THIS ISN'T THE MOST USER FRIENDLY THING, I KNOW. IT IS A PROOF OF CONCEPT THAT CAN BE MODIFIED
             // if edit is clicked - I want to find a way to change it to 'Save' when in editting mode
             case R.id.action_quote_edit: {
                  // if we are currently editing the quote
                 if (viewSwitcher.getCurrentView() == findViewById(R.id.layout_quote_edit_display)) {
-                    // confirm before saving
-                    showConfirmSaveDialog();
+                    saveQuote();
+                    displayQuote();
                     return true;
                 } else {
                     // if we were viewing then we now we switch to edit
-                    showConfirmEditDialog();
+                    editQuote();
                     return true;
                 }
             }
             case R.id.action_add: {
-                showConfirmNewDialog();
+                createNewQuote();
                 return true;
             }
             default:
@@ -123,93 +125,66 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         }
     }
 
-    private void showConfirmSaveDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirm_save_title)
-                .setMessage(R.string.confirm_save_text)
-                .setPositiveButton(R.string.confirm_save, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        saveQuote();
-                        displayQuote();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(QuoteDisplayActivity.this, "Quote not saved.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    /* **/
-    private void showConfirmNewDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirm_add_title)
-                .setMessage(R.string.confirm_add_text)
-                .setPositiveButton(R.string.confirm_add, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        createNewQuote();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(QuoteDisplayActivity.this, "Quote creation cancelled.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    private void showConfirmEditDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.confirm_edit_title)
-                .setMessage(R.string.confirm_edit_text)
-                .setPositiveButton(R.string.confirm_edit, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        editQuote();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    private void setUpDisplay() {
+    private void setUpQuoteDisplayTextViews() {
         // get the TextViews
+        Log.i(LOG_TAG, "Setting up Quote Display TextViews.");
         quoteAuthorView = (TextView) findViewById(R.id.quote_author);
         quoteTextView = (TextView) findViewById(R.id.quote_text);
         quoteTagsView = (TextView) findViewById(R.id.quote_tags);
+        Log.i(LOG_TAG, "Quote Display TextViews successfully set up.");
     }
 
-    private void updateDisplay() {
+    private void populateQuoteDisplayTextViews() {
         // refresh the display
+        Log.i(LOG_TAG, "Populating Quote Display TextViews.");
         String title = mQuote.getTitle();
         getSupportActionBar().setTitle(title.length() != 0 ? title : getResources().getString(R.string.no_title));
         quoteAuthorView.setText(mQuote.getAuthor());
         quoteTextView.setText(mQuote.getQuoteText());
         quoteTagsView.setText(mQuote.getTagsAsString());
+        Log.i(LOG_TAG, "Quote Display TextViews successfully populated.");
     }
 
     private void displayQuote() {
         // refresh the display and switch to normal display
-        updateDisplay();
+        Log.i(LOG_TAG, "Switching to Quote Display view");
+        populateQuoteDisplayTextViews();
         viewSwitcher.setDisplayedChild(viewSwitcher.indexOfChild(findViewById(R.id.layout_quote_display)));
+        Log.i(LOG_TAG, "Successfully switched to Quote Display view");
+        // TODO: Remove in release
         Toast.makeText(QuoteDisplayActivity.this, "Display Quote", Toast.LENGTH_SHORT).show();
     }
 
     private void saveQuote() {
+        Log.i(LOG_TAG, "Saving Quote.");
         // we can only save if we were editing
         assert (viewSwitcher.getNextView() == findViewById(R.id.layout_quote_edit_display));
 
+        // TODO: Is this the best way to check if we are creating a new quote before saving?
+        // if the user asked to create a new quote mQuote was set to null
+        //   we wait to create the quote until we save
+        // I DECIDED AGAINST THIS METHOD BECAUSE WHAT IF THE USER BACKS OUT ON ACCIDENT WITHOUT SAVING?
+        // EVERYTHING WOULD BE LOST. ITS PROBABLY BEST TO SAVE MORE OFTEN THAN NECESSARY AND RISK
+        // SAVING EMPTY QUOTES THAN TO SAVE LESS OFTEN AND RISK LOSING QUOTES
+        // --ANOTHER WAY TO MITIGATE THE DANGER OF LOSING A NEW QUOTE IS TO HAVE THE SAVE DIALOG
+        // SHOW UP EVERY TIME THE USER TRIES TO LEAVE THE SCREEN, BUT THAT MIGHT BE HARD TO DO,
+        // SO FOR NOW I'M GOING WITH "SAVE ALWAYS NO MATTER WHAT THE USER DOES"
+        // TODO: Talk about dynamically saving the quote as the user types (like iOS Notes does)
+//        if (mQuote == null) { new Quote(); }
+
+        // TODO: One way to dynamically save would be to create a thread that calls saveQuote once a second (or whenever)
+        // TODO: The risk there is the costly setTags() call would be called repeatedly even when not necessary
+        // TODO: So we would want a way to check what has actually changed and only call saveQuote when something changes
+        // TODO: and then saveQuote would only save the EditText that changed.
         // save what is in the EditText boxes to the quote
-        mQuote.setTitle(editQuoteTitleView.getText().toString());
-        mQuote.setAuthor(editQuoteAuthorView.getText().toString());
+        // Note: We need to set the QuoteText before setting the Title so we can set the correct Generic Title when creating new Quotes
         mQuote.setQuoteText(editQuoteTextView.getText().toString());
+        // TODO: Example: titleChanged is a boolean that gets set if the title EditText was modified
+//        if (titleChanged) {
+            mQuote.setTitle(editQuoteTitleView.getText().toString());
+//            titleChanged = false;
+//        }
+        mQuote.setAuthor(editQuoteAuthorView.getText().toString());
         mQuote.setTags(editQuoteTagsView.getText().toString());
 
 //        // Quote currently adds itself to the QuotesList on its own so this isn't necessary.
@@ -219,57 +194,58 @@ public class QuoteDisplayActivity extends AppCompatActivity {
 //            Quote.addToQuotesList(mQuote);
 //        }
 
+        Log.i(LOG_TAG, "Quote saved.");
         Toast.makeText(QuoteDisplayActivity.this, "Quote saved.", Toast.LENGTH_SHORT).show();
     }
 
     private void createNewQuote() {
-        // if currently editing a quote we should ask to save this one first
-        if (viewSwitcher.getCurrentView() == findViewById(R.id.layout_quote_edit_display)) {
-//            showConfirmSaveDialog();
+        Log.i(LOG_TAG, "Creating new Quote.");
+        // if currently editing a quote we need to save this one first
+        if (viewSwitcher.getCurrentView() == findViewById(R.id.layout_quote_edit_display) && mQuote != null) {
             saveQuote();
-            // TODO: 6/18/16
-            // I wanted to ask the user if they want to save the quote currently being edited
-            // before creating a new one, but that is impossible to do the way I hoped.
-            // The problem is that dialogs get put on a seperate thread so when I call the dialog
-            // asking to confirm the save the thread that called the dialog keeps going and creates
-            // the new Quote before the user can hit yes for save, so they lose the old Quote and
-            // get kicked out of edit mode on the new quote before they can even get started.
-            // I guess one solution is to create another dialog that asks both questions in one
-            // so they don't have the racing issue, but that is not what I wanted to do.
-            // That would be more complicated and harder to undesrtand what was going on, so for
-            // now the simple solution is to save every time, without asking.
         }
 
         // create a new empty quote
         mQuote = new Quote();
-        // ADD TO DB NOW OR ONLY ON SAVE?
-
-        Toast.makeText(QuoteDisplayActivity.this, "New Quote created.", Toast.LENGTH_SHORT).show();
+        // FIXME: We need to decide on the best way to do this, but for now I want to create a new empty quote here
+        // See notes in saveQuote for more information on why this is the way it is for ow
+//        // The next time saveQuote is called it will check if mQuote is null before saving and create a new Quote if necessary
+//        mQuote = null;
 
         // now show the edit screen
         editQuote();
+
+        Log.i(LOG_TAG, "New Quote created.");
+        Toast.makeText(QuoteDisplayActivity.this, "New Quote created.", Toast.LENGTH_SHORT).show();
     }
 
-    private void setUpEditText() {
+    private void setUpEditTextViews() {
+        Log.i(LOG_TAG, "Setting up Quote EditText views.");
         // get the EditText views
         editQuoteTitleView = (EditText) findViewById(R.id.quote_title_edit);
         editQuoteAuthorView = (EditText) findViewById(R.id.quote_author_edit);
         editQuoteTagsView = (EditText) findViewById(R.id.quote_tags_edit);
         editQuoteTextView = (EditText) findViewById(R.id.quote_text_edit);
+        Log.i(LOG_TAG, "Quote EditText views successfully set up.");
     }
 
-    private void updateEditDisplay() {
+    private void populateQuoteEditTextViews() {
+        Log.i(LOG_TAG, "Populating Quote EditText views.");
         // set the title to something generic
         getSupportActionBar().setTitle(R.string.layout_quote_edit_title);
         editQuoteTitleView.setText(mQuote.getTitle());
         editQuoteTextView.setText(mQuote.getQuoteText());
         editQuoteTagsView.setText(mQuote.getTagsAsString());
         editQuoteAuthorView.setText(mQuote.getAuthor());
+        Log.i(LOG_TAG, "Quote EditText views successfully populated.");
     }
 
     private void editQuote() {
-        updateEditDisplay();
+        Log.i(LOG_TAG, "Switching to Quote Edit view");
+        populateQuoteEditTextViews();
         viewSwitcher.setDisplayedChild(viewSwitcher.indexOfChild(findViewById(R.id.layout_quote_edit_display)));
+        Log.i(LOG_TAG, "Successfully switched to Quote Edit view");
+        // TODO: Remove in release
         Toast.makeText(QuoteDisplayActivity.this, "Edit Quote", Toast.LENGTH_SHORT).show();
     }
 }
