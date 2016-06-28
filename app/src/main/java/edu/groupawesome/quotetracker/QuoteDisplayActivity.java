@@ -140,7 +140,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         String title = mQuote.getTitle();
         getSupportActionBar().setTitle(title.length() != 0 ? title : getResources().getString(R.string.no_title));
         quoteAuthorView.setText(mQuote.getAuthor());
-        quoteTextView.setText(mQuote.getQuoteText());
+        quoteTextView.setText(mQuote.getFullText());
         quoteTagsView.setText(mQuote.getTagsAsString());
         Log.i(LOG_TAG, "Quote Display TextViews successfully populated.");
     }
@@ -185,6 +185,8 @@ public class QuoteDisplayActivity extends AppCompatActivity {
 //            titleChanged = false;
 //        }
         mQuote.setAuthor(editQuoteAuthorView.getText().toString());
+
+        // TODO: setTags is costly, we should check if something changed before calling it
         mQuote.setTags(editQuoteTagsView.getText().toString());
 
 //        // Quote currently adds itself to the QuotesList on its own so this isn't necessary.
@@ -234,7 +236,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         // set the title to something generic
         getSupportActionBar().setTitle(R.string.layout_quote_edit_title);
         editQuoteTitleView.setText(mQuote.getTitle());
-        editQuoteTextView.setText(mQuote.getQuoteText());
+        editQuoteTextView.setText(mQuote.getFullText());
         editQuoteTagsView.setText(mQuote.getTagsAsString());
         editQuoteAuthorView.setText(mQuote.getAuthor());
         Log.i(LOG_TAG, "Quote EditText views successfully populated.");

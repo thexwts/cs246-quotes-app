@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by JL5372 on 6/8/2016.
  *
@@ -41,7 +39,7 @@ public class TestDatabaseManagement {
         System.out.println(a.getAuthor());
         System.out.println(a.getID());
         System.out.println(a.getTitle());
-        System.out.println(a.getQuoteText());
+        System.out.println(a.getFullText());
         System.out.println(a.getTags());
 
         Tag tag1 = new Tag("Testing Tag1");

@@ -32,5 +32,9 @@
     <string name="confirm_edit_title">Edit quote</string>
     <string name="confirm_edit_text">Are you sure you want to edit this quote?</string>
     <string name="confirm_edit">Edit Quote</string>
+    <string name="action_sort_tag">List Tags</string>
+    <string name="action_sort_title">List Quotes by Title</string>
+    <string name="action_sort_author">List Quotes by Author</string>
+    <string name="action_sort_text">List Quotes by Text</string>
 
 </resources>

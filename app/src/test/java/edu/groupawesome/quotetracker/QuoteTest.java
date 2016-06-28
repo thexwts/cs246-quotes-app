@@ -6,14 +6,14 @@ package edu.groupawesome.quotetracker;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class QuoteTest {
+
     @Test
-    public void testGenericTitle() {
+    public void testGenericTitle() throws Exception {
         String title = null;
         String author = "William Shakespeare";
         String quoteTextHuge = "Cowards die many times before their deaths; The valiant never taste " +
@@ -50,7 +50,7 @@ public class QuoteTest {
     }
 
     @Test
-    public void testGetTitle() {
+    public void testGetTitle() throws Exception {
         String[] titles = { "Hamlet",
                             "Julius Caesar",
                             "Romeo and Juliet",
@@ -72,5 +72,61 @@ public class QuoteTest {
         assertEquals("Macbeth", quotes[3].getTitle());
         assertEquals("A Midsummer Night's Dream", quotes[4].getTitle());
         assertEquals("Lorem ipsum dolor sit amet,...", quotes[5].getTitle());
+    }
+
+    @Test
+    public void test_getQuoteTitlesList_return() throws Exception {
+        // since we don't have a clear function for the QuotesList (on purpose) we need to 'clear' it by
+        // setting it to an empty List so the next test function will have a clear Quotes list
+        Quote.setQuotesList(new ArrayList<Quote>());
+        Quote.generateGenericQuotes();
+
+        // we want to make sure if the List returned by getQuoteTitlesList is unmodifiable
+        List<String> titles = Quote.getQuoteTitlesList();
+
+        // we want to make sure the Strings in the List returned by getQuoteTitlesList can't be changed
+        boolean failed = false;
+        try {
+            // I want this to fail
+            titles.set(0, "Test");
+        } catch(UnsupportedOperationException ex) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+        // we want to make sure if the List returned by getQuoteTitlesList can't be added to
+        failed = false;
+        try {
+            // I want this to fail
+            titles.add("Test");
+        } catch(UnsupportedOperationException ex) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+        // we want to make sure the List returned by getQuoteTitlesList can't be cleared
+        failed = false;
+        try {
+            // I want this to fail
+            titles.clear();
+        } catch(UnsupportedOperationException ex) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+        // we want to make sure the List returned by getQuoteTitlesList can't have contents removed
+        failed = false;
+        try {
+            // I want this to fail
+            titles.remove(0);
+        } catch(UnsupportedOperationException ex) {
+            failed = true;
+        }
+        assertTrue(failed);
+
+
+        // since we don't have a clear function for the QuotesList (on purpose) we need to 'clear' it by
+        // setting it to an empty List so the next test function will have a clear Quotes list
+        Quote.setQuotesList(new ArrayList<Quote>());
     }
 }

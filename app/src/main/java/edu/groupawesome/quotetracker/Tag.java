@@ -132,20 +132,22 @@ class Tag {
         return Collections.unmodifiableSet(sTagsSet);
     }
 
-    /** Clears the Set of Tags and adds a whole new Collection. */
-    static void setTagsSet(Collection<Tag> newTagSet) {
-        assert(newTagSet != null);
-        assert(sTagsSet != null);
+    /**
+     * Returns a list of the the Tags names
+     * @return String List containing all the Tag names
+     */
+    static List<String> getTagsNamesList() {
+        List<String> tagsNames = new ArrayList<String>();
 
-        // clear the current Set if it isn't empty already
-        if (!sTagsSet.isEmpty()) { sTagsSet.clear(); }
+        for (Tag tag : sTagsSet) {
+            tagsNames.add(tag.getTagName());
+        }
 
-        // add all the tags to the set
-        sTagsSet.addAll(newTagSet);
+        return Collections.unmodifiableList(tagsNames);
     }
 
     /** Clears the Set of Tags and adds a whole new Collection. */
-    static void setTagsSet(Tag[] newTagSet) {
+    static boolean setTagsSet(Collection<Tag> newTagSet) {
         assert(newTagSet != null);
         assert(sTagsSet != null);
 
@@ -153,7 +155,19 @@ class Tag {
         if (!sTagsSet.isEmpty()) { sTagsSet.clear(); }
 
         // add all the tags to the set
-        Collections.addAll(sTagsSet, newTagSet);
+        return sTagsSet.addAll(newTagSet);
+    }
+
+    /** Clears the Set of Tags and adds a whole new Collection. */
+    static boolean setTagsSet(Tag[] newTagSet) {
+        assert(newTagSet != null);
+        assert(sTagsSet != null);
+
+        // clear the current Set if it isn't empty already
+        if (!sTagsSet.isEmpty()) { sTagsSet.clear(); }
+
+        // add all the tags to the set
+        return Collections.addAll(sTagsSet, newTagSet);
     }
 
     static boolean addTagToTagsSet(Tag newTag) {

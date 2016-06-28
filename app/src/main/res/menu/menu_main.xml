@@ -10,4 +10,21 @@
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           app:showAsAction="never"/>
+
+    <item android:id="@+id/action_sort_tag"
+          android:title="@string/action_sort_tag"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/action_sort_title"
+          android:title="@string/action_sort_title"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/action_sort_author"
+          android:title="@string/action_sort_author"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/action_sort_text"
+          android:title="@string/action_sort_text"
+          app:showAsAction="never"/>
+    <!--TODO: Add sort options to the menu-->
 </menu>

@@ -21,10 +21,11 @@ class Quote {
     private int mID;
     private String mTitle;
     private String mAuthor;
-    private String mQuoteText;
+    private String mFullText;
+    private String mShortText;
     private Set<Tag> mTagsSet;
 
-    private static List<Quote> sQuotesList;
+    private static List<Quote> sQuotesList = new ArrayList<Quote>();
 
     // CONSTRUCTORS
     // TODO: When creating a new Quote in QuoteDisplay it is easiest if I can create an empty Quote. That would mean no text and no title though, so what should we do? I think a generic time stamp title would be nice.
@@ -33,26 +34,40 @@ class Quote {
     }
 
     Quote(String title, String author, String quoteText, Set<Tag> tags) {
-        // Initialize the fields
+        Log.i(LOG_TAG, "Starting Quote constructor");
+
+        // Initialize the Author field
+        Log.d(LOG_TAG, "New Quote author parameter: " + author);
         mAuthor = author;
-        mQuoteText = quoteText;
+        Log.i(LOG_TAG, "New Quote author: " + mAuthor);
 
-        mTitle = title;
-        if (mTitle == null || mTitle.equals("")) {
+        // Initialize the Text fields - setQuoteText sets full and short text
+        Log.d(LOG_TAG, "New Quote text parameter: " + quoteText);
+        setQuoteText(quoteText);
+        Log.i(LOG_TAG, "New Quote text (full): " + mFullText);
+        Log.i(LOG_TAG, "New Quote text (short): " + mFullText);
+
+        // Initialize the Title field
+        Log.d(LOG_TAG, "New Quote title parameter: " + title);
+        if (title == null || title.equals("")) {
             mTitle = generateGenericTitle();
+        } else {
+            mTitle = title;
         }
+        Log.i(LOG_TAG, "New Quote title: " + mTitle);
 
+        // Initialize the Tags field
+        Log.d(LOG_TAG, "New Quote tags parameter: " + (tags != null ? tags.toString() : null));
         mTagsSet = new HashSet<>();
         setTags(tags);
+        Log.i(LOG_TAG, "New Quote tags: " + this.getTagsAsString());
 
         // TODO: Insert into database and assign ID to mID
 
-        // Add this new Quote to the static List
-        if (sQuotesList == null) {
-            sQuotesList = new ArrayList<Quote>();
-        }
+        Log.i(LOG_TAG, "Adding New Quote to static Quotes List");
         sQuotesList.add(this);
 
+        Log.i(LOG_TAG, "Ending Quote constructor");
     }
 
     // GETTERS/SETTERS
@@ -77,8 +92,17 @@ class Quote {
      * Returns the quote text
      * @return the text of the quote
      */
-    String getQuoteText() {
-        return mQuoteText;
+    String getFullText() {
+        return mFullText;
+    }
+
+    // TODO: 6/28/16 Test this
+    /**
+     * Returns the first 10 words of the quote text
+     * @return the first 10 words of the text of the quote
+     */
+    String getShortText() {
+        return mShortText;
     }
 
     /**
@@ -138,7 +162,9 @@ class Quote {
      * @param quoteText the text of the quote
      */
     void setQuoteText(String quoteText) {
-        mQuoteText = quoteText;
+        mFullText = quoteText;
+        // todo: maybe make the length user configurable as a stretch goal (using a preferences file)?
+        mShortText = getFirstWordsAsString(mFullText, 10);
     }
 
     /**
@@ -169,7 +195,6 @@ class Quote {
             mTagsSet.addAll(tags);
         }
     }
-
 
     /**
      * Sets the tag set from a String. The String may contain one or many Tag names, separated by a comma and space.
@@ -262,7 +287,7 @@ class Quote {
         if (mID != quote.mID) return false;
         if (mTitle != null ? !mTitle.equals(quote.mTitle) : quote.mTitle != null) return false;
         if (mAuthor != null ? !mAuthor.equals(quote.mAuthor) : quote.mAuthor != null) return false;
-        if (!mQuoteText.equals(quote.mQuoteText)) return false;
+        if (!mFullText.equals(quote.mFullText)) return false;
         return !(mTagsSet != null ? !mTagsSet.equals(quote.mTagsSet) : quote.mTagsSet != null);
 
     }
@@ -275,47 +300,109 @@ class Quote {
      */
     private String generateGenericTitle() {
         // check for missing text before trying to operate on it
-        if (mQuoteText != null && !mQuoteText.equals("")) {
+        if (mFullText != null && !mFullText.equals("")) {
             // Get no more than the first five words of the quote
-            String[] spaceSplit = getFirstFiveWords(mQuoteText);
-
-            // Join the five or fewer words back into a String
-            String genericTitle = TextUtils.join(" ", spaceSplit);
-
-            // Add an ellipses at the end if the quote had more than five words
-            if (mQuoteText.split(" ").length > 5 || mQuoteText.split("\n").length > 1) {
-                genericTitle += "...";
-            }
-
-            return genericTitle;
+            return getFirstWordsAsString(mFullText, 5);
         } else {
             return "";
         }
     }
 
+    // TODO: 6/28/16 Test this
     /**
-     * Helper function for Quote::getGenericTitle()
-     * Returns an array containing the correct number of words
-     * for a generic title from the text parameter
+     * Helper function for Quote::getGenericTitle() and Quote::setQuoteText()
+     * Returns an array containing the first requested number of words
+     * from the text parameter. Adds ellipses (...) if text is longer than length.
      * @param text the text to get the words from
-     * @return an array of words
+     * @param length how many words to return
+     * @return an array of the first words in text
      */
-    private String[] getFirstFiveWords(String text) {
-        String[] firstFive = text.split(" ", 5);
-
-        String[] newlineSplit = text.split("\n");
-        if (newlineSplit.length > 1) {
-            firstFive = newlineSplit[0].split(" ", 5);
+    private String[] getFirstWordsAsArray(String text, int length) {
+        Log.i(LOG_TAG, "Starting getFirstWordsAsArray");
+        // if there is a newline in text then we only want words from the first line
+        String[] newlineSplitArray = text.split("\n");
+        // store an array of the split first line of the text here so we know how many words there are
+        String[] firstLineSplitArray = newlineSplitArray[0].split(" ");
+        // copy over the first length number of words to return
+        String[] firstWordsArray;
+        if (firstLineSplitArray.length >= length) {
+            // if the first line is longer than the desired length we can copy up to length
+            firstWordsArray = Arrays.copyOf(firstLineSplitArray, length);
+        } else {
+            // if the first line is too short than we only want to copy what it has so we don't get NULL values
+            firstWordsArray = Arrays.copyOf(firstLineSplitArray, firstLineSplitArray.length);
         }
 
-        if (firstFive.length < 5) {
-            return firstFive;
+        Log.d(LOG_TAG, "newlineSplitArray: " + TextUtils.join(" \\n ", newlineSplitArray));
+        Log.d(LOG_TAG, "newlineSplitArray length: " + newlineSplitArray.length);
+        Log.d(LOG_TAG, "firstLineSplitArray: " + TextUtils.join(" ", firstLineSplitArray));
+        Log.d(LOG_TAG, "firstLineSplitArray: " + firstLineSplitArray.length);
+        Log.d(LOG_TAG, "firstWordsArray: " + TextUtils.join(" ", firstWordsArray));
+        Log.d(LOG_TAG, "firstWordsArray length: " + firstWordsArray.length);
+        assert(firstWordsArray.length <= length);
+
+        // Add an ellipses at the end if the quote had more than the requested length or more than one line
+        if (firstLineSplitArray.length > length || newlineSplitArray.length > 1) {
+            // create a new longer array to hold the ellipses
+            String[] arrayWithEllipses = new String[firstWordsArray.length + 1];
+            // copy over the first length number of words
+            int i;
+            for (i = 0; i < firstWordsArray.length; i++) {
+                arrayWithEllipses[i] = firstWordsArray[i];
+                Log.d(LOG_TAG, "arrayWithEllipses: " + TextUtils.join(" ", arrayWithEllipses));
+            }
+            // add the ellipses at the end of the array
+            arrayWithEllipses[i] = "...";
+            Log.d(LOG_TAG, "arrayWithEllipses final: " + TextUtils.join(" ", arrayWithEllipses));
+
+            // and finally point our firstWordsArray at the new array with the ellipses
+            firstWordsArray = arrayWithEllipses;
+
+            Log.d(LOG_TAG, "firstWordsArray with ellipses: " + TextUtils.join(" ", firstWordsArray));
         }
 
-        String[] secondarySplit = firstFive[4].split(" ");
-        firstFive[4] = secondarySplit[0];
+        Log.i(LOG_TAG, "Ending getFirstWordsAsArray");
+//        if (firstWordsArray.length < length) {
+            return firstWordsArray;
+//        }
 
-        return firstFive;
+//        // TODO: Ask Ethan when this might be necessary. It was only giving me NullPointerExceptions after refactoring.
+//        Log.d(LOG_TAG, "firstWordsArray before secondary split: " + TextUtils.join(" ", firstWordsArray));
+//        String[] secondarySplit = firstWordsArray[length - 1].split(" ");
+//        Log.d(LOG_TAG, "secondarySplit: " + TextUtils.join(" ", secondarySplit));
+//        firstWordsArray[length - 1] = secondarySplit[0];
+//        Log.d(LOG_TAG, "firstWordsArray after secondary split: " + TextUtils.join(" ", firstWordsArray));
+//
+//        return firstWordsArray;
+    }
+
+    // TODO: 6/28/16 Test this
+    /**
+     * Helper function for Quote::getGenericTitle() and Quote::setQuoteText()
+     * Returns a String containing the first requested number of words, separated by spaces,
+     * from the text parameter. Adds ellipses (...) if text is longer than length.
+     * @param text the text to get the words from
+     * @param length how many words to return
+     * @return a single String of the first words in text
+     */
+    private String getFirstWordsAsString(String text, int length) {
+        Log.i(LOG_TAG, "Starting getFirstWordsAsString");
+
+        Log.d(LOG_TAG, "text: " + text);
+        Log.d(LOG_TAG, "length: " + length);
+
+        // call the other function so we don't duplicate code
+        String[] firstWordsArray = getFirstWordsAsArray(text, length);
+
+        Log.d(LOG_TAG, "firstWordsArray: " + TextUtils.join(" ", firstWordsArray));
+
+        // Join the first length number or fewer words back into a String
+        String firstWordsString = TextUtils.join(" ", firstWordsArray);
+
+        Log.d(LOG_TAG, "firstWordsString: " + firstWordsString);
+
+        Log.i(LOG_TAG, "Ending getFirstWordsAsString");
+        return firstWordsString;
     }
 
     /**
@@ -366,7 +453,7 @@ class Quote {
      * @return the list of quotes
      */
     static List<Quote> getQuotesList() {
-        return sQuotesList;
+        return Collections.unmodifiableList(sQuotesList);
     }
 
     /**
@@ -376,11 +463,57 @@ class Quote {
     static List<String> getQuoteTitlesList() {
         // Add every quote's title to a List
         List<String> titles = new ArrayList<>();
+
         for (Quote quote : sQuotesList) {
             titles.add(quote.getTitle());
         }
 
-        return titles;
+        return Collections.unmodifiableList(titles);
+    }
+
+    /**
+     * Returns a list of the text of every Quote in the static list
+     * @return the list of texts
+     */
+    static List<String> getQuoteFullTextsList() {
+        // Add every quote's text to a List
+        List<String> texts = new ArrayList<>();
+
+        for (Quote quote : sQuotesList) {
+            texts.add(quote.getFullText());
+        }
+
+        return Collections.unmodifiableList(texts);
+    }
+
+    /**
+     * Returns a list of the short version of the text of every Quote in the static list
+     * @return the list of texts
+     */
+    static List<String> getQuoteShortTextsList() {
+        // Add every quote's text to a List
+        List<String> shortTexts = new ArrayList<>();
+
+        for (Quote quote : sQuotesList) {
+            shortTexts.add(quote.getShortText());
+        }
+
+        return Collections.unmodifiableList(shortTexts);
+    }
+
+    /**
+     * Returns a list of the author of every Quote in the static list
+     * @return the list of authors
+     */
+    static List<String> getQuoteAuthorsList() {
+        // Add every quote's author to a List
+        List<String> authors = new ArrayList<>();
+
+        for (Quote quote : sQuotesList) {
+            authors.add(quote.getAuthor());
+        }
+
+        return Collections.unmodifiableList(authors);
     }
 
     /**
@@ -404,9 +537,13 @@ class Quote {
      */
     static boolean setQuotesList(List<Quote> quotes) {
         // This removes all existing quotes, so clear the list before adding the new quotes
-        sQuotesList.clear();
-        sQuotesList.addAll(quotes);
-        return sQuotesList.equals(quotes);
+        assert(quotes != null);
+        assert(sQuotesList != null);
+
+        // clear the current Set if it isn't empty already
+        if (!sQuotesList.isEmpty()) { sQuotesList.clear(); }
+
+        return sQuotesList.addAll(quotes);
     }
 
     /**
@@ -416,9 +553,13 @@ class Quote {
      */
     static boolean setQuotesList(Quote[] quotes) {
         // This removes all existing quotes, so clear the list before adding the new quotes
-        sQuotesList.clear();
-        sQuotesList.addAll(Arrays.asList(quotes));
-        return sQuotesList.equals(quotes);
+        assert(quotes != null);
+        assert(sQuotesList != null);
+
+        // clear the current Set if it isn't empty already
+        if (!sQuotesList.isEmpty()) { sQuotesList.clear(); }
+
+        return Collections.addAll(sQuotesList, quotes);
     }
 
     /**
@@ -444,6 +585,44 @@ class Quote {
         } catch (IndexOutOfBoundsException ex) {
             return null;
         }
+    }
+
+
+
+    // FIXME: for testing purposes only, move to QuoteTest before launching product
+    static void generateGenericQuotes() {
+        // TODO: Ask Ethan which title goes to which quote
+        String[] titles = { "Hamlet",
+                "Romeo and Juliet",
+                "A Midsummer Night's Dream",
+                "Macbeth",
+                "Julius Caesar",
+                null };
+
+        String author = "William Shakespeare";
+        String quoteTextHuge = "Cowards die many times before their deaths; The valiant never taste " +
+                "of death but once.\nOf all the wonders that I yet have heard, it seems to me most " +
+                "strange that men should fear;\nSeeing that death, a necessary end, will come when " +
+                "it will come";
+        String quoteTextLong = "To thine own self be true, and it must follow, as the night " +
+                "the day, thou canst not then be false to any man.";
+        String quoteTextSixWords = "I have not slept one wink.";
+        String quoteTextFiveWords = "Nothing will come of nothing.";
+        String quoteTextShort = "Et tu, Brute!";
+        String quoteTextNewLine = "Haikus are tricky\nI'm not very good at them\nRefrigerator";
+        String quoteTextShortNoTitle = "I'm hungry!";
+        String quoteTextFiveWordsNoTitle= "That's the best you've got?";
+        String quoteTextSixWordsNoTitle = "It's hard to think when hungry.";
+
+        new Quote(titles[0], author, quoteTextHuge, null);
+        new Quote(titles[1], author, quoteTextLong, null);
+        new Quote(titles[2], author, quoteTextSixWords, null);
+        new Quote(titles[3], author, quoteTextFiveWords, null);
+        new Quote(titles[4], author, quoteTextShort, null);
+        new Quote(titles[5], "Ethan Stewart", quoteTextNewLine, null);
+        new Quote(titles[5], "Reed Harston", quoteTextShortNoTitle, null);
+        new Quote(titles[5], "Reed Harston", quoteTextFiveWordsNoTitle, null);
+        new Quote(titles[5], "Reed Harston", quoteTextSixWordsNoTitle, null);
     }
 
 }
