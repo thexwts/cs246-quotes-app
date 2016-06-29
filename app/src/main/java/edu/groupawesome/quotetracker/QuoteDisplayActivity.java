@@ -13,8 +13,6 @@ public class QuoteDisplayActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "QuoteDisplayActivity";
 
-    static String NEW_QUOTE = "edu.groupawesome.quotetracker.NEW_QUOTE";
-
     // views for displaying
     private static TextView quoteAuthorView;
     private static TextView quoteTextView;
@@ -73,14 +71,14 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         // quotes, and thus the index of the list lines up perfectly with our QuotesList, but if it were a search
         // then the list would only include some of the items and the index of the item on the ListView wouldn't
         // match up with the actual index of the quote in the list - FOR THIS TEST IT WORKS, BUT NOT FOR THE REAL THING
-        if (intent.hasExtra(Quote.QUOTE_LIST_INDEX)) {
+        if (intent.hasExtra(Quote.QUOTE_ID)) {
             // get our quote from the Quote's list using the Intent's messag as an index (This is a temporary hack)
-            int quoteIndex = intent.getIntExtra(Quote.QUOTE_LIST_INDEX, 0);
+            int quoteIndex = intent.getIntExtra(Quote.QUOTE_ID, 0);
             mQuote = Quote.getQuoteAtIndex(quoteIndex);
             // display the quote
             displayQuote();
 
-        } else if (intent.hasExtra(NEW_QUOTE)) {
+        } else if (intent.hasExtra(Quote.NEW_QUOTE)) {
             // if we were asked for a new quote then create a new quote
             createNewQuote();
 
@@ -103,7 +101,7 @@ public class QuoteDisplayActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             // FIXME: EDIT/SAVE BUTTON - THIS ISN'T THE MOST USER FRIENDLY THING, I KNOW. IT IS A PROOF OF CONCEPT THAT CAN BE MODIFIED
-            // if edit is clicked - I want to find a way to change it to 'Save' when in editting mode
+            // if edit is clicked - I want to find a way to change it to 'Save' when in editing mode
             case R.id.action_quote_edit: {
                  // if we are currently editing the quote
                 if (viewSwitcher.getCurrentView() == findViewById(R.id.layout_quote_edit_display)) {
@@ -120,10 +118,15 @@ public class QuoteDisplayActivity extends AppCompatActivity {
                 createNewQuote();
                 return true;
             }
+            case R.id.action_delete: {
+                deleteQuote();
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     private void setUpQuoteDisplayTextViews() {
         // get the TextViews
@@ -219,6 +222,17 @@ public class QuoteDisplayActivity extends AppCompatActivity {
 
         Log.i(LOG_TAG, "New Quote created.");
         Toast.makeText(QuoteDisplayActivity.this, "New Quote created.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void deleteQuote() {
+        Log.i(LOG_TAG, "Deleting Quote.");
+
+        Quote.deleteQuote(mQuote);
+
+        //FIXME: this goes back to main activity but needs to update the list once it gets there
+        finish();
+
+        Log.i(LOG_TAG, "Quote deleted.");
     }
 
     private void setUpEditTextViews() {

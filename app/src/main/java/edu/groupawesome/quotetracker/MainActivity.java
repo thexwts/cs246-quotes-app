@@ -22,9 +22,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private SearchView mSearchView;
     private ArrayAdapter<String> mAdapter;
 
-    // TODO: I think we need to make this a Map so we can store the ID of the Quote/Tag along with the String that will be displayed.
     private List<String> mFilteredList = new ArrayList<>();
-//    private Map<Integer, String> mFilteredMap;
+    private List<Integer> mFilteredListIDs = new ArrayList<>();
 
     private static boolean testQuotesSetUpComplete = false;
 
@@ -43,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // set up some quotes for testing on first onCreate only
         if (!testQuotesSetUpComplete) {
             // make a lot of quotes for heavy testing
-            for (int i = 0; i < 100; i++) {
+//            for (int i = 0; i < 100; i++) {
                 Quote.generateGenericQuotes();
-            }
+//            }
             // we only do this once
             testQuotesSetUpComplete = true;
         }
@@ -139,26 +138,43 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mSortBy = sortBy;
         // clear the list so we can
         mFilteredList.clear();
+        mFilteredListIDs.clear();
 
         String title;
         switch (mSortBy) {
             case TAG:
                 title = "Tags";
-                mFilteredList.addAll(Tag.getTagsNamesList());
+                // FIXME: this puts everything in reverse order, and we don't want that
+                for (Tag tag : Tag.getTagsSet()) {
+                    mFilteredList.add(tag.getTagName());
+                    mFilteredListIDs.add(tag.getID());
+                }
                 break;
             case TITLE:
                 title = "Quotes by Title";
-                mFilteredList.addAll(Quote.getQuoteTitlesList());
+                // FIXME: this puts everything in reverse order, and we don't want that
+                for (Quote quote : Quote.getQuotesList()) {
+                    mFilteredList.add(quote.getTitle());
+                    mFilteredListIDs.add(quote.getID());
+                }
                 break;
             case TEXT:
                 title = "Quotes by Text";
+                // FIXME: this puts everything in reverse order, and we don't want that
                 // TODO: Maybe make the option to show the full text as a user configurable setting
                 // here we only show the short version of the text, but the search function searches the full text
-                mFilteredList.addAll(Quote.getQuoteShortTextsList());
+                for (Quote quote : Quote.getQuotesList()) {
+                    mFilteredList.add(quote.getShortText());
+                    mFilteredListIDs.add(quote.getID());
+                }
                 break;
             case AUTHOR:
                 title = "Quotes by Author";
-                mFilteredList.addAll(Quote.getQuoteAuthorsList());
+                // FIXME: this puts everything in reverse order, and we don't want that
+                for (Quote quote : Quote.getQuotesList()) {
+                    mFilteredList.add(quote.getAuthor());
+                    mFilteredListIDs.add(quote.getID());
+                }
                 break;
             default:
                 title = "sortBy Switch defaulted";
@@ -183,9 +199,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mAdapter = new ArrayAdapter<String>(this, R.layout.list_view_text, mFilteredList);
         mQuotesListView.setAdapter(mAdapter);
 
-        // enable filtering on the ListView so we can use the search bar
-        mQuotesListView.setTextFilterEnabled(true);
-
         // TODO: decide which method to use; clear the search bar, or update filter with its contents
         // and clear the search bar in case there is something typed in
         if (mSearchView != null) {
@@ -205,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void createNewQuote() {
         Intent newQuoteInent = new Intent(MainActivity.this, QuoteDisplayActivity.class);
 
-        newQuoteInent.putExtra(QuoteDisplayActivity.NEW_QUOTE, true);
+        newQuoteInent.putExtra(Quote.NEW_QUOTE, true);
         startActivity(newQuoteInent);
     }
 
@@ -216,22 +229,51 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mQuotesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
+                // TODO: add the position or id
+                Log.i(LOG_TAG, String.format("ListView item %d clicked", position));
 
-                Intent showQuoteIntent = new Intent(MainActivity.this, QuoteDisplayActivity.class);
+                Log.d(LOG_TAG, "Position clicked: " + position);
+                Log.d(LOG_TAG, "Row id clicked:   " + id);
 
-                // Here I am sending an int representing which item in the list was clicked.
-                // THIS IS FLAWED I KNOW - this assumes that the list the user clicked on is an exhaustive list of all the
-                // quotes, and thus the index of the list lines up perfectly with our QuotesList, but if it were a search
-                // then the list would only include some of the items and the index of the item on the ListView wouldn't
-                // match up with the actual index of the quote in the list - FOR THIS TEST IT WORKS, BUT NOT FOR THE REAL THING
-                // We'll have to find a new way to tell which quote the user clicked on.
-                // TODO: Send the Quote's ID and have QuoteDisplayActivity find the Quote by it's ID
-                // We can get the ID here from short list being displayed because it is still in scope
-                // FIXME: Check if the list only has one item and contains "No results matching". If so, do nothing
-                showQuoteIntent.putExtra(Quote.QUOTE_LIST_INDEX, position);
+                // only do anything if there is at least one item to click
+                // when there are "No results" mFilteredList has 1 String and mFilteredListIDs has none
+                // so if mFilteredListIDs has at least one String then we know we are displaying something
+                if (mFilteredListIDs.size() >= 1) {
+                    Intent showQuoteIntent = new Intent(MainActivity.this, QuoteDisplayActivity.class);
 
-                // broadcast our showQuoteIntent
-                startActivity(showQuoteIntent);
+                    // TODO: Send the Quote's ID and have QuoteDisplayActivity find the Quote by it's ID
+
+                    // react differently if showing Tag or Quote
+                    switch (mSortBy) {
+                        case TAG:
+                            // TODO: make this show the Quotes with the given tag
+                            break;
+                        case AUTHOR:
+                            // FIXME: right now the Author list shows a list of all the Quotes, so Authors get repeated
+                            // we could/should probably make this show each author once and when clicked the Quotes
+                            // with that Author are shown, like the Tag list
+                            // for now this acts just like Title and Text
+                            // uncomment break; when ready to implement a separate Author action
+                            // break;
+                        case TITLE:
+                        case TEXT:
+                            // We can get the ID here from the filtered list being displayed because it is still in scope
+                            int quoteId = mFilteredListIDs.get(position);
+                            Log.d(LOG_TAG, "User clicked Quote: " + quoteId);
+
+                            showQuoteIntent.putExtra(Quote.QUOTE_ID, quoteId);
+
+                            // broadcast our showQuoteIntent
+                            startActivity(showQuoteIntent);
+
+                            break;
+                        default:
+                            Log.wtf(LOG_TAG, "OnItemClickListener Switch defaulted");
+                            break;
+                    }
+
+                }
+
             }
         });
 
@@ -250,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         String cmp = newText.toLowerCase();
 
         mFilteredList.clear();
+        mFilteredListIDs.clear();
 
         switch (mSortBy) {
             case TAG:
@@ -259,15 +302,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                     if (tagNameLower.contains(cmp)) {
                         mFilteredList.add(tagName);
+                        mFilteredListIDs.add(tag.getID());
                     }
                 }
                 break;
             case TITLE:
-                for (String title : Quote.getQuoteTitlesList()) {
+                for (Quote quote : Quote.getQuotesList()) {
+                    String title = quote.getTitle();
                     String titleLower = title.toLowerCase();
 
                     if (titleLower.contains(cmp)) {
                         mFilteredList.add(title);
+                        mFilteredListIDs.add(quote.getID());
+                        Log.d(LOG_TAG, "QuoteID: " + quote.getID());
                     }
                 }
                 break;
@@ -279,18 +326,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (textLower.contains(cmp)) {
                         // but only show the short version
                         mFilteredList.add(quote.getShortText());
+                        mFilteredListIDs.add(quote.getID());
                     }
                 }
                 break;
             case AUTHOR:
-                for (String author : Quote.getQuoteAuthorsList()) {
+                for (Quote quote : Quote.getQuotesList()) {
+                    String author = quote.getAuthor();
                     String authorLower = author.toLowerCase();
 
                     if (authorLower.contains(cmp)) {
                         mFilteredList.add(author);
+                        mFilteredListIDs.add(quote.getID());
                     }
                 }
-                break;
             default:
                 Log.wtf(LOG_TAG, "onQueryTextChange Switch defaulted");
                 break;
@@ -309,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         return true;
     }
-
 
 }
 

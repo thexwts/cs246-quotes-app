@@ -13,8 +13,8 @@ class Quote {
 
     private static final String LOG_TAG = "QuoteClass";
 
-    // TODO: Do we really need something like this? This is currently here so we can compile. QuoteDisplayActivity needs it for its intent.
-    static final String QUOTE_LIST_INDEX = "edu.groupawesome.quotetracker.QUOTE_LIST_INDEX";
+    static final String QUOTE_ID = "edu.groupawesome.quotetracker.QUOTE_ID";
+    static final String NEW_QUOTE = "edu.groupawesome.quotetracker.NEW_QUOTE";
 
     // TODO: Should we add time fields as well? Date created, last opened, last modified? They could then be sorted in that order on the main screen.
     // MEMBER VARIABLES
@@ -25,6 +25,7 @@ class Quote {
     private String mShortText;
     private Set<Tag> mTagsSet;
 
+    private static int sNextID = 0;  // FIXME: this is for testing only, will be retrieved from DB in release
     private static List<Quote> sQuotesList = new ArrayList<Quote>();
 
     // CONSTRUCTORS
@@ -43,7 +44,13 @@ class Quote {
 
         // Initialize the Text fields - setQuoteText sets full and short text
         Log.d(LOG_TAG, "New Quote text parameter: " + quoteText);
-        setQuoteText(quoteText);
+        if (quoteText != null) {
+            setQuoteText(quoteText);
+        } else {
+            mFullText = null;
+            mShortText = null;
+        }
+
         Log.i(LOG_TAG, "New Quote text (full): " + mFullText);
         Log.i(LOG_TAG, "New Quote text (short): " + mFullText);
 
@@ -63,6 +70,10 @@ class Quote {
         Log.i(LOG_TAG, "New Quote tags: " + this.getTagsAsString());
 
         // TODO: Insert into database and assign ID to mID
+        Log.i(LOG_TAG, "Static Quote nextID before New Quote: " + sNextID);
+        mID = sNextID++;
+        Log.i(LOG_TAG, "New Quote ID: " + mID);
+        Log.i(LOG_TAG, "Static Quote nextID after New Quote:  " + sNextID);
 
         Log.i(LOG_TAG, "Adding New Quote to static Quotes List");
         sQuotesList.add(this);
@@ -318,50 +329,51 @@ class Quote {
      * @return an array of the first words in text
      */
     private String[] getFirstWordsAsArray(String text, int length) {
-        Log.i(LOG_TAG, "Starting getFirstWordsAsArray");
-        // if there is a newline in text then we only want words from the first line
-        String[] newlineSplitArray = text.split("\n");
-        // store an array of the split first line of the text here so we know how many words there are
-        String[] firstLineSplitArray = newlineSplitArray[0].split(" ");
-        // copy over the first length number of words to return
-        String[] firstWordsArray;
-        if (firstLineSplitArray.length >= length) {
-            // if the first line is longer than the desired length we can copy up to length
-            firstWordsArray = Arrays.copyOf(firstLineSplitArray, length);
-        } else {
-            // if the first line is too short than we only want to copy what it has so we don't get NULL values
-            firstWordsArray = Arrays.copyOf(firstLineSplitArray, firstLineSplitArray.length);
-        }
-
-        Log.d(LOG_TAG, "newlineSplitArray: " + TextUtils.join(" \\n ", newlineSplitArray));
-        Log.d(LOG_TAG, "newlineSplitArray length: " + newlineSplitArray.length);
-        Log.d(LOG_TAG, "firstLineSplitArray: " + TextUtils.join(" ", firstLineSplitArray));
-        Log.d(LOG_TAG, "firstLineSplitArray: " + firstLineSplitArray.length);
-        Log.d(LOG_TAG, "firstWordsArray: " + TextUtils.join(" ", firstWordsArray));
-        Log.d(LOG_TAG, "firstWordsArray length: " + firstWordsArray.length);
-        assert(firstWordsArray.length <= length);
-
-        // Add an ellipses at the end if the quote had more than the requested length or more than one line
-        if (firstLineSplitArray.length > length || newlineSplitArray.length > 1) {
-            // create a new longer array to hold the ellipses
-            String[] arrayWithEllipses = new String[firstWordsArray.length + 1];
-            // copy over the first length number of words
-            int i;
-            for (i = 0; i < firstWordsArray.length; i++) {
-                arrayWithEllipses[i] = firstWordsArray[i];
-                Log.d(LOG_TAG, "arrayWithEllipses: " + TextUtils.join(" ", arrayWithEllipses));
+        if (text != "") {
+            Log.i(LOG_TAG, "Starting getFirstWordsAsArray");
+            // if there is a newline in text then we only want words from the first line
+            String[] newlineSplitArray = text.split("\n");
+            // store an array of the split first line of the text here so we know how many words there are
+            String[] firstLineSplitArray = newlineSplitArray[0].split(" ");
+            // copy over the first length number of words to return
+            String[] firstWordsArray;
+            if (firstLineSplitArray.length >= length) {
+                // if the first line is longer than the desired length we can copy up to length
+                firstWordsArray = Arrays.copyOf(firstLineSplitArray, length);
+            } else {
+                // if the first line is too short than we only want to copy what it has so we don't get NULL values
+                firstWordsArray = Arrays.copyOf(firstLineSplitArray, firstLineSplitArray.length);
             }
-            // add the ellipses at the end of the array
-            arrayWithEllipses[i] = "...";
-            Log.d(LOG_TAG, "arrayWithEllipses final: " + TextUtils.join(" ", arrayWithEllipses));
 
-            // and finally point our firstWordsArray at the new array with the ellipses
-            firstWordsArray = arrayWithEllipses;
+            Log.d(LOG_TAG, "newlineSplitArray: " + TextUtils.join(" \\n ", newlineSplitArray));
+            Log.d(LOG_TAG, "newlineSplitArray length: " + newlineSplitArray.length);
+            Log.d(LOG_TAG, "firstLineSplitArray: " + TextUtils.join(" ", firstLineSplitArray));
+            Log.d(LOG_TAG, "firstLineSplitArray: " + firstLineSplitArray.length);
+            Log.d(LOG_TAG, "firstWordsArray: " + TextUtils.join(" ", firstWordsArray));
+            Log.d(LOG_TAG, "firstWordsArray length: " + firstWordsArray.length);
+            assert (firstWordsArray.length <= length);
 
-            Log.d(LOG_TAG, "firstWordsArray with ellipses: " + TextUtils.join(" ", firstWordsArray));
-        }
+            // Add an ellipses at the end if the quote had more than the requested length or more than one line
+            if (firstLineSplitArray.length > length || newlineSplitArray.length > 1) {
+                // create a new longer array to hold the ellipses
+                String[] arrayWithEllipses = new String[firstWordsArray.length + 1];
+                // copy over the first length number of words
+                int i;
+                for (i = 0; i < firstWordsArray.length; i++) {
+                    arrayWithEllipses[i] = firstWordsArray[i];
+                    Log.d(LOG_TAG, "arrayWithEllipses: " + TextUtils.join(" ", arrayWithEllipses));
+                }
+                // add the ellipses at the end of the array
+                arrayWithEllipses[i] = "...";
+                Log.d(LOG_TAG, "arrayWithEllipses final: " + TextUtils.join(" ", arrayWithEllipses));
 
-        Log.i(LOG_TAG, "Ending getFirstWordsAsArray");
+                // and finally point our firstWordsArray at the new array with the ellipses
+                firstWordsArray = arrayWithEllipses;
+
+                Log.d(LOG_TAG, "firstWordsArray with ellipses: " + TextUtils.join(" ", firstWordsArray));
+            }
+
+            Log.i(LOG_TAG, "Ending getFirstWordsAsArray");
 //        if (firstWordsArray.length < length) {
             return firstWordsArray;
 //        }
@@ -374,6 +386,9 @@ class Quote {
 //        Log.d(LOG_TAG, "firstWordsArray after secondary split: " + TextUtils.join(" ", firstWordsArray));
 //
 //        return firstWordsArray;
+        } else {
+            return new String[] {""};
+        }
     }
 
     // TODO: 6/28/16 Test this
@@ -392,12 +407,8 @@ class Quote {
         Log.d(LOG_TAG, "length: " + length);
 
         // call the other function so we don't duplicate code
-        String[] firstWordsArray = getFirstWordsAsArray(text, length);
-
-        Log.d(LOG_TAG, "firstWordsArray: " + TextUtils.join(" ", firstWordsArray));
-
         // Join the first length number or fewer words back into a String
-        String firstWordsString = TextUtils.join(" ", firstWordsArray);
+        String firstWordsString = TextUtils.join(" ", getFirstWordsAsArray(text, length));
 
         Log.d(LOG_TAG, "firstWordsString: " + firstWordsString);
 
@@ -625,4 +636,7 @@ class Quote {
         new Quote(titles[5], "Reed Harston", quoteTextSixWordsNoTitle, null);
     }
 
+    public static void deleteQuote(Quote quote) {
+        sQuotesList.remove(quote);
+    }
 }
